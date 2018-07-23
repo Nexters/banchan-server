@@ -1,9 +1,11 @@
 package com.banchan.domain.question;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class VoteCount {
-    int total, ans_a, ans_b;
+    int total, ansA, ansB;
 
 }

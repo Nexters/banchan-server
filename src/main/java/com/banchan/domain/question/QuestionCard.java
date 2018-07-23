@@ -1,7 +1,6 @@
 package com.banchan.domain.question;
 
 import lombok.Builder;
-import lombok.Singular;
 import lombok.Value;
 
 import java.util.Map;
@@ -11,7 +10,6 @@ import java.util.Map;
 public class QuestionCard {
 
     private int id;
-
-    @Singular("addDetail")
+    private VoteCount voteCount;
     private Map<DetailType, String> details;
 }
