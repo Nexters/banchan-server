@@ -1,6 +1,5 @@
 package com.banchan.DTO;
 
-import com.banchan.domain.question.DetailType;
 import lombok.Data;
 
 import javax.persistence.*;

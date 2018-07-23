@@ -12,13 +12,13 @@ public class Votes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "userId")
+    @Column(name = "userId", nullable = false)
     private int userId;
 
     @ManyToOne
-    @JoinColumn(name = "questionId")
+    @JoinColumn(name = "questionId", nullable = false)
     private Questions question;
 
-    @Column(name = "answer")
+    @Column(name = "answer", nullable = false)
     private int answer;
 }

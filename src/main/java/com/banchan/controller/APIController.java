@@ -17,4 +17,9 @@ public class APIController {
     public DetailType questionDetails(){
         return DetailType.ANSWER_A;
     }
+
+    @RequestMapping("test")
+    public String helloWorld(){
+        return "Hello World!";
+    }
 }

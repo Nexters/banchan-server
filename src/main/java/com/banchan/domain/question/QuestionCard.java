@@ -10,7 +10,8 @@ import java.util.Map;
 @Builder
 public class QuestionCard {
 
+    private int id;
+
     @Singular("addDetail")
     private Map<DetailType, String> details;
-
 }
