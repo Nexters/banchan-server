@@ -1,4 +1,4 @@
-package question.domain;
+package com.banchan.domain.question;
 
 public enum DetailType {
     QUESTION(1), ANSWER_A(2), ANSWER_B(3), IMG_A(4), IMG_B(5), IMG_Q(6);

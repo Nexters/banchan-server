@@ -1,5 +1,6 @@
-package question.domain;
+package com.banchan.domain;
 
+import com.banchan.domain.question.DetailType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
