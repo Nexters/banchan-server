@@ -26,7 +26,7 @@
 /.nb-gradle/
 
 ###settings###
-application.properties
+*.properties
 *.yml
 
 
