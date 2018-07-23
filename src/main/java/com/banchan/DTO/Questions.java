@@ -24,4 +24,8 @@ public class Questions {
     @JsonIgnore
     @OneToMany(mappedBy = "question")
     private List<QuestionDetails> questionDetails;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "question")
+    private List<Votes> votes;
 }

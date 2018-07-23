@@ -1,9 +1,16 @@
 package com.banchan.domain.question;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Singular;
+import lombok.Value;
 
-@Data
+import java.util.Map;
+
+@Value
+@Builder
 public class QuestionCard {
-    private String content;
+
+    @Singular("addDetail")
+    private Map<DetailType, String> details;
 
 }
