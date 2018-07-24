@@ -1,4 +1,4 @@
-package com.banchan.DTO;
+package com.banchan.dto;
 
 import lombok.Data;
 

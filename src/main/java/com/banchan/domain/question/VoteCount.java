@@ -6,6 +6,6 @@ import lombok.Value;
 @Value
 @Builder
 public class VoteCount {
-    int total, ansA, ansB;
+    long ansA, ansB, total;
 
 }
