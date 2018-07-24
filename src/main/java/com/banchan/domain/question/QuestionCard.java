@@ -10,6 +10,6 @@ import java.util.Map;
 public class QuestionCard {
 
     private int id;
-    private VoteCount voteCount;
     private Map<DetailType, String> details;
+    private VoteCount voteCount;
 }

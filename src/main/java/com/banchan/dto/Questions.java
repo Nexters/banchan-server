@@ -1,4 +1,4 @@
-package com.banchan.DTO;
+package com.banchan.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -19,10 +19,9 @@ public class Questions {
     private int userId;
 
     @Column(name="writeTime")
-    private LocalDateTime wrtieTime;
+    private LocalDateTime writeTime;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
     private List<QuestionDetails> questionDetails;
 
     @JsonIgnore

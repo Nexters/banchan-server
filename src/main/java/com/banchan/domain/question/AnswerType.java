@@ -1,10 +1,12 @@
 package com.banchan.domain.question;
 
+import com.banchan.repository.QuestionsRepository;
+
 public enum AnswerType {
 
-    A(0), B(1);
+    A(QuestionsRepository.ANS_A), B(QuestionsRepository.ANS_B);
 
-    private int value;
+    private final int value;
 
     AnswerType(int value) {
         this.value = value;
@@ -16,8 +18,8 @@ public enum AnswerType {
 
     public static AnswerType valueOf(int value){
         switch(value){
-            case 0 : return A;
-            case 1 : return B;
+            case QuestionsRepository.ANS_A : return A;
+            case QuestionsRepository.ANS_B : return B;
             default: throw new IllegalStateException(value + "는 AnswerType 으로 변환할 수 없습니다.");
         }
     }

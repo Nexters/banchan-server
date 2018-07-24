@@ -1,5 +1,6 @@
-package com.banchan.DTO;
+package com.banchan.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,11 +13,12 @@ public class QuestionDetails {
     private int id;
 
     @Column(name = "type")
-    private char type;
+    private int type;
 
     @Column(name = "content")
     private String content;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "questionId")
     private Questions question;
