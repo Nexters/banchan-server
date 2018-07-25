@@ -7,19 +7,17 @@ import com.banchan.dto.RawQuestionCard;
 import com.banchan.dto.VoteCountRaw;
 import com.banchan.repository.QuestionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class QuestionCardService {
 
-    private QuestionsService questionsService;
+    @Autowired private QuestionsService questionsService;
     @Autowired private QuestionsRepository questionsRepository;
-
-    public void setQuestionsService(QuestionsService questionsService) {
-        this.questionsService = questionsService;
-    }
 
     public List<QuestionCard> questionCards(){
         List<RawQuestionCard> raws = questionsRepository.findAllRawQuestionCard();
