@@ -19,8 +19,6 @@ public class QuestionsService {
                     DetailType.valueOf(detail.getType()),
                     detail.getContent()
             );
-
         return map;
     }
-
 }
