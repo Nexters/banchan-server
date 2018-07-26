@@ -3,7 +3,7 @@ package com.banchan.controller;
 import com.banchan.dto.RawQuestionCard;
 import com.banchan.repository.QuestionDetailsRepository;
 import com.banchan.repository.QuestionsRepository;
-import com.banchan.service.question.AwsS3Service;
+import com.banchan.service.question.AwsS3ServiceImpl;
 import com.banchan.service.question.QuestionCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,8 @@ public class APIController {
     @Autowired QuestionCardService questionCardService;
     @Autowired QuestionDetailsRepository questionDetailsRepository;
     @Autowired QuestionsRepository questionsRepository;
-    @Autowired AwsS3Service awsS3Service;
+    @Autowired
+    AwsS3ServiceImpl awsS3Service;
 
     @RequestMapping(value = "questionCards", method = RequestMethod.GET)
     public ResponseEntity<?> questionCards(){
