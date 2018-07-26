@@ -24,7 +24,6 @@ public class Questions {
     @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
     private List<QuestionDetails> questionDetails;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "question")
     private List<Votes> votes;
 }
