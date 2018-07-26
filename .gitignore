@@ -24,3 +24,9 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+###settings###
+*.properties
+*.yml
+
+

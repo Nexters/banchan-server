@@ -6,6 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
@@ -15,6 +16,12 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
+dependencyManagement {
+    imports {
+        mavenBom 'software.amazon.awssdk:bom:2.0.0-preview-10'
+    }
+}
+
 group = 'com.banchan'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -23,13 +30,22 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2')
+    compile("org.mariadb.jdbc:mariadb-java-client")
     runtime('com.h2database:h2')
-    runtime('mysql:mysql-connector-java')
     compileOnly('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    testCompile("junit:junit:4.12")
+    testRuntime("org.junit.vintage:junit-vintage-engine:5.2.0")
+
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+
+    compile 'software.amazon.awssdk:s3'
+    compile 'commons-fileupload:commons-fileupload:1.3.3'
+    compile 'commons-io:commons-io:2.6'
 }
