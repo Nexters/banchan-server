@@ -1,6 +1,5 @@
 package com.banchan.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,13 +12,11 @@ public class Votes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private int userId;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "questionId", nullable = false)
-    private Questions question;
+    @Column(name = "question_id", nullable = false)
+    private int questionId;
 
     @Column(name = "answer", nullable = false)
     private int answer;

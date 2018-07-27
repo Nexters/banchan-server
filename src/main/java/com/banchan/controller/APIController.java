@@ -1,5 +1,6 @@
 package com.banchan.controller;
 
+import com.banchan.domain.question.DetailType;
 import com.banchan.dto.QuestionCardData;
 import com.banchan.repository.QuestionDetailsRepository;
 import com.banchan.repository.QuestionsRepository;
@@ -23,8 +24,7 @@ public class APIController {
     @Autowired QuestionCardService questionCardService;
     @Autowired QuestionDetailsRepository questionDetailsRepository;
     @Autowired QuestionsRepository questionsRepository;
-    @Autowired
-    AwsS3ServiceImpl awsS3Service;
+    @Autowired AwsS3ServiceImpl awsS3Service;
 
     @RequestMapping(value = "questionCards", method = RequestMethod.GET)
     public ResponseEntity<?> questionCards(){
@@ -43,7 +43,7 @@ public class APIController {
 
     @RequestMapping(value = "imgUpload", method = RequestMethod.POST)
     public ResponseEntity<?> imgUpload(@RequestBody MultipartFile multipartFile){
-        awsS3Service.upload(multipartFile);
+        awsS3Service.upload(DetailType.IMG_Q, multipartFile);
         return ResponseEntity.status(HttpStatus.OK).body("img upload success");
     }
 }

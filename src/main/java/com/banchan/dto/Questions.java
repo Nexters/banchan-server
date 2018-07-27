@@ -1,6 +1,5 @@
 package com.banchan.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,15 +14,17 @@ public class Questions {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private int userId;
 
-    @Column(name="writeTime")
+    @Column(name="write_time")
     private LocalDateTime writeTime;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "question_id")
     private List<QuestionDetails> questionDetails;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "question_id")
     private List<Votes> votes;
 }
