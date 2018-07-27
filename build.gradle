@@ -48,4 +48,7 @@ dependencies {
     compile 'software.amazon.awssdk:s3'
     compile 'commons-fileupload:commons-fileupload:1.3.3'
     compile 'commons-io:commons-io:2.6'
+
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.5.0'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.5.0'
 }
