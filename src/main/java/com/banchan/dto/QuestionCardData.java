@@ -3,13 +3,13 @@ package com.banchan.dto;
 import lombok.Data;
 
 @Data
-public class RawQuestionCard {
+public class QuestionCardData {
 
     private Questions question;
-    private VoteCountRaw voteCountRaw;
+    private VoteCountData voteCountData;
 
-    public RawQuestionCard(Questions question, long ansA, long total) {
+    public QuestionCardData(Questions question, long ansA, long total) {
         this.question = question;
-        this.voteCountRaw = new VoteCountRaw(ansA, total);
+        this.voteCountData = new VoteCountData(ansA, total);
     }
 }

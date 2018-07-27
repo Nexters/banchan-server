@@ -1,5 +1,6 @@
 package com.banchan.service.question;
 
+import com.banchan.domain.question.DetailType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     @Value("${aws.s3.bucket}")
     private String bucket;
 
-    public PutObjectResponse upload(final MultipartFile multipartFile) {
+    public PutObjectResponse upload(final DetailType type, final MultipartFile multipartFile) {
 
         try {
             return s3Client.putObject(
@@ -41,7 +42,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
         }
     }
 
-    public List<PutObjectResponse> upload(MultipartFile[] multipartFiles) {
+    public List<PutObjectResponse> upload(final DetailType[] type, MultipartFile[] multipartFiles) {
         final List<PutObjectResponse> putObjectResponseList = new ArrayList<>();
 
         Arrays.stream(multipartFiles)

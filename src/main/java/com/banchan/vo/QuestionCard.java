@@ -1,5 +1,6 @@
-package com.banchan.domain.question;
+package com.banchan.vo;
 
+import com.banchan.domain.question.DetailType;
 import lombok.Builder;
 import lombok.Value;
 

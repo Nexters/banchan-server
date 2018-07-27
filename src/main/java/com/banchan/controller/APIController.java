@@ -1,6 +1,6 @@
 package com.banchan.controller;
 
-import com.banchan.dto.RawQuestionCard;
+import com.banchan.dto.QuestionCardData;
 import com.banchan.repository.QuestionDetailsRepository;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.service.question.AwsS3ServiceImpl;
@@ -31,9 +31,9 @@ public class APIController {
         return ResponseEntity.ok(questionCardService.questionCards());
     }
 
-    @RequestMapping("RawQuestionCards")
-    public List<RawQuestionCard> RawQuestionCards(){
-        return questionsRepository.findAllRawQuestionCard();
+    @RequestMapping("QuestionCardsData")
+    public List<QuestionCardData> QuestionCardsData(){
+        return questionsRepository.findAllQuestionCardData();
     }
 
     @RequestMapping("test")
