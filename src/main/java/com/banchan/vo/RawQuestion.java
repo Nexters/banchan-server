@@ -8,4 +8,5 @@ import java.util.Map;
 public class RawQuestion {
     private int userId;
     private Map<String, Object> details;
+    private Map<String, byte[]> images;
 }

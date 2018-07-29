@@ -1,6 +1,8 @@
 package com.banchan.controller;
 
+import com.banchan.domain.question.DetailType;
 import com.banchan.dto.QuestionCardData;
+import com.banchan.exception.SomeException;
 import com.banchan.repository.QuestionDetailsRepository;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.service.question.AwsS3ServiceImpl;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api")
@@ -43,7 +46,16 @@ public class APIController {
 
     @RequestMapping(value = "imgUpload", method = RequestMethod.POST)
     public ResponseEntity<?> imgUpload(@RequestBody MultipartFile multipartFile){
-        awsS3Service.upload(multipartFile);
+
+        awsS3Service.upload(DetailType.IMG_A, multipartFile);
+
+        /*
+        for(String key : request.keySet()){
+            if(! (request.get(key) instanceof MultipartFile))
+                throw new SomeException();
+        }
+        */
+        // awsS3Service.upload(multipartFile);
         return ResponseEntity.status(HttpStatus.OK).body("img upload success");
     }
 }
