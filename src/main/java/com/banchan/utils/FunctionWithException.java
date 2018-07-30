@@ -1,4 +1,4 @@
-package com.banchan.util;
+package com.banchan.utils;
 
 @FunctionalInterface
 public interface FunctionWithException<T, R, E extends Exception> {

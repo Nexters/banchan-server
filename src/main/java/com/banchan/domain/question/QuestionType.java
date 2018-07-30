@@ -2,7 +2,7 @@ package com.banchan.domain.question;
 
 public enum  QuestionType {
 
-    NORMAL(1);
+    DEFAULT_QUESTION(1), INCLUDE_QUESTION_IMAGE(2); // 조금 상의해봐야 할 것 같음
 
     private int value;
 

@@ -24,7 +24,7 @@ public class Questions {
     @JoinColumn(name = "question_id")
     private List<QuestionDetails> questionDetails;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private List<Votes> votes;
 }

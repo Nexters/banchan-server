@@ -19,6 +19,8 @@ public class QuestionCardService {
     @Autowired private QuestionsService questionsService;
     @Autowired private QuestionsRepository questionsRepository;
 
+    // 페이지네이션 필요
+    // 마지막일 경우 LAST_PAGE 같은 걸 넘기고 아니면 MIDDLE_PAGE 같은 걸 넘김
     public List<QuestionCard> questionCards(){
         List<QuestionCardData> datas = questionsRepository.findAllQuestionCardData();
 
