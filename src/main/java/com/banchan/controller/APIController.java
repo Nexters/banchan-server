@@ -1,9 +1,10 @@
 package com.banchan.controller;
 
-import com.banchan.dto.RawQuestionCard;
+import com.banchan.domain.question.DetailType;
+import com.banchan.dto.QuestionCardData;
 import com.banchan.repository.QuestionDetailsRepository;
 import com.banchan.repository.QuestionsRepository;
-import com.banchan.service.question.AwsS3ServiceImpl;
+import com.banchan.service.question.AwsS3Service;
 import com.banchan.service.question.QuestionCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,17 +24,16 @@ public class APIController {
     @Autowired QuestionCardService questionCardService;
     @Autowired QuestionDetailsRepository questionDetailsRepository;
     @Autowired QuestionsRepository questionsRepository;
-    @Autowired
-    AwsS3ServiceImpl awsS3Service;
+    @Autowired AwsS3Service awsS3Service;
 
     @RequestMapping(value = "questionCards", method = RequestMethod.GET)
     public ResponseEntity<?> questionCards(){
         return ResponseEntity.ok(questionCardService.questionCards());
     }
 
-    @RequestMapping("RawQuestionCards")
-    public List<RawQuestionCard> RawQuestionCards(){
-        return questionsRepository.findAllRawQuestionCard();
+    @RequestMapping("QuestionCardsData")
+    public List<QuestionCardData> QuestionCardsData(){
+        return questionsRepository.findAllQuestionCardData();
     }
 
     @RequestMapping("test")
@@ -43,7 +43,7 @@ public class APIController {
 
     @RequestMapping(value = "imgUpload", method = RequestMethod.POST)
     public ResponseEntity<?> imgUpload(@RequestBody MultipartFile multipartFile){
-        awsS3Service.upload(multipartFile);
+        awsS3Service.upload(DetailType.IMG_Q.name(), multipartFile);
         return ResponseEntity.status(HttpStatus.OK).body("img upload success");
     }
 }
