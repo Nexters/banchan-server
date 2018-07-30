@@ -1,6 +1,5 @@
 package com.banchan.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -18,9 +17,7 @@ public class QuestionDetails {
     @Column(name = "content")
     private String content;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "questionId")
-    private Questions question;
+    @Column(name = "question_id")
+    private int questionId;
 
 }

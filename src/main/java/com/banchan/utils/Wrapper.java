@@ -1,4 +1,4 @@
-package com.banchan.util;
+package com.banchan.utils;
 
 import java.util.function.Function;
 
