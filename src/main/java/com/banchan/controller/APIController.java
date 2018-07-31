@@ -42,6 +42,7 @@ public class APIController {
     @RequestMapping(value = "imgUpload", method = RequestMethod.POST)
     public ResponseEntity<?> imgUpload(@RequestBody MultipartFile multipartFile){
         awsS3Service.upload(DetailType.IMG_Q.name(), multipartFile);
+
         return ResponseEntity.status(HttpStatus.OK).body("img upload success");
     }
 }

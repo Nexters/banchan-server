@@ -1,11 +1,13 @@
 package com.banchan.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Data
 @Entity
+@Builder
 public class Votes {
 
     @Id

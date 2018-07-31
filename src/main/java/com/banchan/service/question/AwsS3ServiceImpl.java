@@ -1,5 +1,7 @@
 package com.banchan.service.question;
 
+import com.banchan.domain.question.Reason;
+import com.banchan.domain.upload.UploadResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
@@ -7,6 +9,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.RequestCharged;
 
 import java.io.IOException;
 
@@ -29,21 +32,32 @@ public class AwsS3ServiceImpl implements AwsS3Service{
                 requestBody);
     }
 
-    public PutObjectResponse upload(final String key, final MultipartFile file) {
+    public UploadResponse upload(final String key, final MultipartFile file) {
 
         try {
-            return this.putObject(key, RequestBody.fromInputStream(
+            PutObjectResponse putObjectResponse = this.putObject(key, RequestBody.fromInputStream(
                     file.getInputStream(),
                     file.getSize()
             ));
+
+            if(putObjectResponse.requestCharged() == RequestCharged.REQUESTER)
+                return UploadResponse.success();
+
+            return UploadResponse.fail().reason(Reason.UNKNOWN);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public PutObjectResponse upload(final String key, final byte[] file) {
+    public UploadResponse upload(final String key, final byte[] file) {
 
-        return this.putObject(key, RequestBody.fromBytes(file));
+        PutObjectResponse putObjectResponse = this.putObject(key, RequestBody.fromBytes(file));
+
+        if(putObjectResponse.requestCharged() == RequestCharged.REQUESTER)
+            return UploadResponse.success();
+
+        return UploadResponse.fail().reason(Reason.UNKNOWN);
     }
 
 }

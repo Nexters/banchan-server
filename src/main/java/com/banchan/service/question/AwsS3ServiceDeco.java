@@ -1,7 +1,8 @@
 package com.banchan.service.question;
 
+import com.banchan.domain.question.Reason;
+import com.banchan.domain.upload.UploadResponse;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 public class AwsS3ServiceDeco implements AwsS3Service {
 
@@ -12,18 +13,24 @@ public class AwsS3ServiceDeco implements AwsS3Service {
     }
 
     @Override
-    public PutObjectResponse upload(String key, MultipartFile file) {
-        if(file != null && file.getSize() != 0)
-            return awsS3Service.upload(key, file);
+    public UploadResponse upload(String key, MultipartFile file) {
+        if(file == null || file.getSize() == 0)
+            return UploadResponse.fail().reason(Reason.NO_FILE);
 
-        return null;
+        if(file.getSize() > MAX_SIZE)
+            return UploadResponse.fail().reason(Reason.OUT_OF_SIZE);
+
+        return upload(key, file);
     }
 
     @Override
-    public PutObjectResponse upload(String key, byte[] file) {
-        if(file != null && file.length != 0)
-            return awsS3Service.upload(key, file);
+    public UploadResponse upload(String key, byte[] file) {
+        if(file == null || file.length == 0)
+            return UploadResponse.fail().reason(Reason.NO_FILE);
 
-        return null;
+        if(file.length > MAX_SIZE)
+            return UploadResponse.fail().reason(Reason.OUT_OF_SIZE);
+
+        return upload(key, file);
     }
 }
