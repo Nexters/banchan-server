@@ -1,5 +1,6 @@
 package com.banchan.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Data
 @Entity
+@Builder
 public class Questions {
 
     @Id
@@ -16,6 +18,12 @@ public class Questions {
 
     @Column(name = "user_id")
     private int userId;
+
+    @Column(name = "type")
+    private int type;
+
+    @Column(name = "random_order")
+    private int randomOrder;
 
     @Column(name="write_time")
     private LocalDateTime writeTime;

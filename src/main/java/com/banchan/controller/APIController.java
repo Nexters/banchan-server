@@ -1,11 +1,11 @@
 package com.banchan.controller;
 
 import com.banchan.domain.question.DetailType;
-import com.banchan.dto.QuestionCardData;
-import com.banchan.repository.QuestionDetailsRepository;
-import com.banchan.repository.QuestionsRepository;
 import com.banchan.service.question.AwsS3Service;
 import com.banchan.service.question.QuestionCardService;
+import com.banchan.service.question.QuestionsService;
+import com.banchan.service.question.RawObjectService;
+import com.banchan.vo.RawQuestion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,25 +15,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api")
 public class APIController {
 
-    @Autowired QuestionCardService questionCardService;
-    @Autowired QuestionDetailsRepository questionDetailsRepository;
-    @Autowired QuestionsRepository questionsRepository;
     @Autowired AwsS3Service awsS3Service;
+    @Autowired RawObjectService rawObjectService;
+    @Autowired QuestionsService questionsService;
+    @Autowired QuestionCardService questionCardService;
 
     @RequestMapping(value = "questionCards", method = RequestMethod.GET)
     public ResponseEntity<?> questionCards(){
         return ResponseEntity.ok(questionCardService.questionCards());
     }
 
-    @RequestMapping("QuestionCardsData")
-    public List<QuestionCardData> QuestionCardsData(){
-        return questionsRepository.findAllQuestionCardData();
+    @RequestMapping(value = "question", method = RequestMethod.POST)
+    public ResponseEntity<?> addQuestion(@RequestBody RawQuestion rawQuestion){
+        return ResponseEntity.ok(rawObjectService.add(rawQuestion));
     }
 
     @RequestMapping("test")

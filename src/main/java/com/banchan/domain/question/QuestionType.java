@@ -12,8 +12,12 @@ public enum  QuestionType {
 
     public static QuestionType valueOf(int value){
         switch (value){
-
+            case 1: return DEFAULT_QUESTION;
             default: throw new IllegalStateException(value + "는 QuestionType 으로 변환할 수 없습니다.");
         }
+    }
+
+    public int intValue(){
+        return this.value;
     }
 }
