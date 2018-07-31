@@ -20,3 +20,15 @@ notifications:
     recipients:
       - dlsgur1447@gmail.com
 
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: nanigo-deploy
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: public_read
+    wait-until-deployed: true
+    on:
+      repo: Nexters/banchan-server #Github 주소
+      branch: master
