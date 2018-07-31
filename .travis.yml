@@ -20,6 +20,11 @@ notifications:
     recipients:
       - dlsgur1447@gmail.com
 
+before_deploy:
+  - zip -r nanigo-server *
+  - mkdir -p deploy
+  - mv nanigo-server.zip deploy/nanigo-server.zip
+
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
@@ -28,6 +33,7 @@ deploy:
     region: ap-northeast-2
     skip_cleanup: true
     acl: public_read
+    local_dir: deploy
     wait-until-deployed: true
     on:
       repo: Nexters/banchan-server #Github 주소
