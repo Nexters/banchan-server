@@ -1,10 +1,9 @@
 package com.banchan.service.question;
 
-import com.banchan.dto.Questions;
-import com.banchan.dto.Votes;
-import com.banchan.repository.VotesRepository;
-import com.banchan.vo.RawQuestion;
-import com.banchan.vo.RawVote;
+import com.banchan.model.entity.QuestionsSingular;
+import com.banchan.model.entity.Votes;
+import com.banchan.model.vo.RawQuestion;
+import com.banchan.model.vo.RawVote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,17 +17,7 @@ public class RawObjectService {
     @Autowired VotesService votesService;
     @Autowired QuestionDetailsService questionDetailsService;
 
-    @Transactional
-    public Questions add(RawQuestion rawQuestion){
-        Map<String, String> details = rawQuestion.getDetails();
-        Questions q = questionsService.add(rawQuestion);
 
-        // 이미지 처리 로직 필요. 이미지 업로드 하고 details 에 추가해줘야함
-
-        questionDetailsService.add(q.getId(), details);
-
-        return q;
-    }
 
     public Votes add(RawVote rawVote){
         return votesService.add(rawVote);

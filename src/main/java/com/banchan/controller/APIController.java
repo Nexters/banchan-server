@@ -1,11 +1,8 @@
 package com.banchan.controller;
 
-import com.banchan.domain.question.DetailType;
-import com.banchan.service.question.AwsS3Service;
 import com.banchan.service.question.QuestionCardService;
 import com.banchan.service.question.QuestionsService;
 import com.banchan.service.question.RawObjectService;
-import com.banchan.vo.RawQuestion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("api")
 public class APIController {
 
-    @Autowired AwsS3Service awsS3Service;
     @Autowired RawObjectService rawObjectService;
     @Autowired QuestionsService questionsService;
     @Autowired QuestionCardService questionCardService;
@@ -41,7 +37,6 @@ public class APIController {
 
     @RequestMapping(value = "imgUpload", method = RequestMethod.POST)
     public ResponseEntity<?> imgUpload(@RequestBody MultipartFile multipartFile){
-        awsS3Service.upload(DetailType.IMG_Q.name(), multipartFile);
 
         return ResponseEntity.status(HttpStatus.OK).body("img upload success");
     }

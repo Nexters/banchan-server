@@ -1,7 +1,7 @@
 package com.banchan.service.question;
 
-import com.banchan.domain.question.DetailType;
-import com.banchan.dto.QuestionDetails;
+import com.banchan.model.domain.question.DetailType;
+import com.banchan.model.entity.QuestionDetails;
 import com.banchan.repository.QuestionDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
