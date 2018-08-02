@@ -25,7 +25,7 @@ public enum DetailType {
         this.value = value;
     }
 
-    public static DetailType valueOf(int value){
+    public static DetailType valueOf(Integer value){
         return Optional.ofNullable(map.get(value))
                 .orElseThrow(IllegalArgumentException::new);
     }

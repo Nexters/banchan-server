@@ -4,6 +4,7 @@ import com.banchan.model.domain.question.DetailType;
 import com.banchan.model.entity.QuestionDetails;
 import com.banchan.model.entity.QuestionsSingular;
 import com.banchan.model.response.UploadResponse;
+import com.banchan.model.vo.QuestionCard;
 import com.banchan.repository.QuestionsRepository;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class QuestionsService {
     @Autowired ImageUploader imageUploader;
 
     @Transactional
-    public QuestionsSingular add(QuestionsSingular question){
+    public QuestionsSingular add(QuestionCard questionCard){
 
         question.setRandomOrder(new Random().nextInt(Integer.MAX_VALUE));
         question.setWriteTime(LocalDateTime.now());
