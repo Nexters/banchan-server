@@ -2,23 +2,47 @@ package com.banchan.service.question;
 
 import com.banchan.model.domain.question.DetailType;
 import com.banchan.model.entity.QuestionDetails;
-import com.banchan.model.entity.Questions;
 import com.banchan.model.entity.QuestionsSingular;
-import com.banchan.model.vo.RawQuestion;
+import com.banchan.model.response.UploadResponse;
 import com.banchan.repository.QuestionsRepository;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionsService {
 
-    @Autowired
-    QuestionsRepository questionsRepository;
+    @Autowired QuestionsRepository questionsRepository;
 
-    public QuestionsSingular add(RawQuestion rawQuestion){
+    @Autowired ImageUploader imageUploader;
+
+    @Transactional
+    public QuestionsSingular add(QuestionsSingular question){
+
+        question.setRandomOrder(new Random().nextInt(Integer.MAX_VALUE));
+        question.setWriteTime(LocalDateTime.now());
+
+        Integer questionId = questionsRepository.save(question).getId();
+
+        Map<Integer, UploadResponse> responses = question.getQuestionDetails().stream()
+                .filter(detail -> DetailType.checkImgType(detail.getType()))
+                .peek(detail ->
+                    detail.setContent(this.key(detail, questionId)))
+                .collect(Collectors.toMap(
+                        detail -> detail.getType(),
+                        detail -> imageUploader.upload(this.key(detail, questionId), Base64.getDecoder().decode(detail.getContent()))
+                ));
+
+        responses.
+
 
     }
 
@@ -33,16 +57,9 @@ public class QuestionsService {
 
         return map;
     }
-    @Transactional
-    public Questions add(RawQuestion rawQuestion){
-        Map<String, String> details = rawQuestion.getDetails();
-        Questions q = questionsService.add(rawQuestion);
 
-        // 이미지 처리 로직 필요. 이미지 업로드 하고 details 에 추가해줘야함
-
-        questionDetailsService.add(q.getId(), details);
-
-        return q;
+    public String key(QuestionDetails detail, int questionId){
+        return new StringBuilder(questionId).append(DetailType.valueOf(detail.getType()).name()).toString();
     }
 
     // void 로 할 예정

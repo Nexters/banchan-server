@@ -3,7 +3,6 @@ package com.banchan.service.question;
 import com.banchan.model.domain.question.AnswerType;
 import com.banchan.model.entity.Votes;
 import com.banchan.repository.VotesRepository;
-import com.banchan.model.vo.RawVote;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class VotesService {

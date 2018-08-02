@@ -2,7 +2,6 @@ package com.banchan.controller;
 
 import com.banchan.service.question.QuestionCardService;
 import com.banchan.service.question.QuestionsService;
-import com.banchan.service.question.RawObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

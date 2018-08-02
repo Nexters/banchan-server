@@ -9,7 +9,6 @@ import java.util.List;
 
 @Data
 @Entity(name = "questions")
-@Builder
 public class QuestionsSingular {
 
     @Id
@@ -18,9 +17,6 @@ public class QuestionsSingular {
 
     @Column(name = "user_id")
     private Integer userId;
-
-    @Column(name = "type")
-    private Integer type;
 
     @Column(name = "random_order")
     private Integer randomOrder;

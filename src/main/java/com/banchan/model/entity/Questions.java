@@ -18,9 +18,6 @@ public class Questions {
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "type")
-    private Integer type;
-
     @Column(name = "random_order")
     private Integer randomOrder;
 
