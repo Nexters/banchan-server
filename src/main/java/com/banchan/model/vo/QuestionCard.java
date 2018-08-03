@@ -13,6 +13,8 @@ public class QuestionCard {
     private Integer id;
     private Integer order;
 
+    private Integer userId;
+
     private Map<DetailType, String> details;
 
     private VoteCount voteCount;

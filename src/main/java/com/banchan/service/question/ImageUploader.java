@@ -1,7 +1,7 @@
 package com.banchan.service.question;
 
-import com.banchan.model.domain.question.DetailType;
-import com.banchan.model.response.UploadResponse;
+import com.banchan.model.exception.ImageUploadException;
+import com.google.common.base.Strings;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +10,8 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.RequestCharged;
+
+import java.util.stream.Stream;
 
 @Service
 public class ImageUploader {
@@ -24,21 +26,35 @@ public class ImageUploader {
     private static final String root = "img/";
     private static final int MAX_SIZE = 1024 * 1024 * 10; // 10MB
 
-    public UploadResponse upload(String key, byte[] file) {
-        if(file == null || file.length == 0)
-            return UploadResponse.fail(UploadResponse.Reason.NO_FILE);
+    public String upload(String key, byte[] file) {
 
-        if(file.length > MAX_SIZE)
-            return UploadResponse.fail(UploadResponse.Reason.OUT_OF_SIZE);
+        key +=  precondition(file);
 
-        return s3Client.putObject(
+        // 예외 확인 필요 NULL POINTER 같은 거
+        Stream.of(s3Client.putObject(
                 PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(root + key)
                         .build(),
                 RequestBody.fromBytes(file))
-                .requestCharged() == RequestCharged.REQUESTER ?
-                UploadResponse.success() : UploadResponse.fail(UploadResponse.Reason.UNKNOWN);
+                .requestCharged())
+                .filter(RequestCharged.REQUESTER::equals)
+                .findAny()
+                .orElseThrow(() -> new ImageUploadException("S3 업로드 실패"));
+
+        return key;
     }
 
+    public String precondition(byte[] file){
+        if(file == null || file.length == 0 || file.length > MAX_SIZE)
+            throw new ImageUploadException("이미지 업로드 실패");
+
+        //Illegal state exception 발생 가능
+        return Stream.of(tika.detect(file))
+                .map(Strings::nullToEmpty)
+                .filter(mimeType -> mimeType.startsWith("image/"))
+                .map(mimeType -> mimeType.replaceAll("image/", ""))
+                .findAny()
+                .orElseThrow(() -> new ImageUploadException("파일 형식이 맞지 않습니다"));
+    }
 }

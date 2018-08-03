@@ -30,6 +30,10 @@ public enum DetailType {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
+    public boolean isImgType(){
+        return checkImgType(this.value);
+    }
+
     public static boolean checkImgType(Integer value){
         return img.contains(value);
     }
