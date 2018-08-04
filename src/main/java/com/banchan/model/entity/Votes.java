@@ -1,5 +1,6 @@
 package com.banchan.model.entity;
 
+import com.banchan.model.domain.question.AnswerType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,5 +22,5 @@ public class Votes {
     private Integer questionId;
 
     @Column(name = "answer", nullable = false)
-    private Integer answer;
+    private AnswerType answer;
 }

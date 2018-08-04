@@ -9,13 +9,13 @@ import java.util.Optional;
 
 public enum AnswerType {
 
-    A(0), B(1);
+    A(false), B(true);
 
-    private static final Map<Integer, AnswerType> map = Maps.newHashMap();
+    private static final Map<Boolean, AnswerType> map = Maps.newHashMap();
 
-    @Getter private final Integer value;
+    @Getter private final Boolean value;
 
-    AnswerType(int value) {
+    AnswerType(Boolean value) {
         this.value = value;
     }
 
@@ -24,7 +24,7 @@ public enum AnswerType {
                 .forEach(type -> map.put(type.value, type));
     }
 
-    public static AnswerType valueOf(Integer value){
+    public static AnswerType valueOf(Boolean value){
         return Optional.ofNullable(map.get(value))
                 .orElseThrow(IllegalArgumentException::new);
     }

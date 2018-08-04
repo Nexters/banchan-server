@@ -16,10 +16,10 @@ public class QuestionDetails {
     private Integer id;
 
     @Column(name = "type")
+    @Convert(converter = DeatailTypeAttributeConverter.class)
     private DetailType type;
 
     @Column(name = "content")
-    @Convert(converter = DeatailTypeAttributeConverter.class)
     private String content;
 
     @Column(name = "question_id")

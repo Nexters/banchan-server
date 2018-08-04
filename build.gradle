@@ -57,6 +57,5 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.5.0'
 
     compile 'org.apache.tika:tika-core:1.14'
-
     implementation 'one.util:streamex:0.6.7'
 }
