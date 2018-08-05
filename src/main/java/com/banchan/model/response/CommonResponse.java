@@ -1,12 +1,14 @@
 package com.banchan.model.response;
 
 import com.google.common.collect.Maps;
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
+@Data
 public class CommonResponse<T> {
 
     // static success 는 not thread-safe

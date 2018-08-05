@@ -4,7 +4,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter
-public class DeatailTypeAttributeConverter implements AttributeConverter<DetailType, Integer> {
+public class DetailTypeAttributeConverter implements AttributeConverter<DetailType, Integer> {
 
     @Override
     public Integer convertToDatabaseColumn(DetailType attribute) {

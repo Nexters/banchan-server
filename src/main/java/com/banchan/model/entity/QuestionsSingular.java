@@ -1,6 +1,5 @@
 package com.banchan.model.entity;
 
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;

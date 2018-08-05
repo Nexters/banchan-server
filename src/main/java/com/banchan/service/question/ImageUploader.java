@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.RequestCharged;
 
 import java.util.stream.Stream;
 
@@ -31,16 +30,12 @@ public class ImageUploader {
         key +=  precondition(file);
 
         // 예외 확인 필요 NULL POINTER 같은 거
-        Stream.of(s3Client.putObject(
+        s3Client.putObject(
                 PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(root + key)
                         .build(),
-                RequestBody.fromBytes(file))
-                .requestCharged())
-                .filter(RequestCharged.REQUESTER::equals)
-                .findAny()
-                .orElseThrow(() -> new ImageUploadException("S3 업로드 실패"));
+                RequestBody.fromBytes(file));
 
         return key;
     }
@@ -53,7 +48,7 @@ public class ImageUploader {
         return Stream.of(tika.detect(file))
                 .map(Strings::nullToEmpty)
                 .filter(mimeType -> mimeType.startsWith("image/"))
-                .map(mimeType -> mimeType.replaceAll("image/", ""))
+                .map(mimeType -> mimeType.replaceAll("image/", "."))
                 .findAny()
                 .orElseThrow(() -> new ImageUploadException("파일 형식이 맞지 않습니다"));
     }

@@ -28,4 +28,5 @@ public enum AnswerType {
         return Optional.ofNullable(map.get(value))
                 .orElseThrow(IllegalArgumentException::new);
     }
+
 }

@@ -1,6 +1,6 @@
 package com.banchan.model.entity;
 
-import com.banchan.model.domain.question.DeatailTypeAttributeConverter;
+import com.banchan.model.domain.question.DetailTypeAttributeConverter;
 import com.banchan.model.domain.question.DetailType;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +16,7 @@ public class QuestionDetails {
     private Integer id;
 
     @Column(name = "type")
-    @Convert(converter = DeatailTypeAttributeConverter.class)
+    @Convert(converter = DetailTypeAttributeConverter.class)
     private DetailType type;
 
     @Column(name = "content")

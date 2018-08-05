@@ -10,15 +10,17 @@ import java.util.Optional;
 import java.util.Set;
 
 public enum DetailType {
-    QUESTION(1), ANSWER_A(2), ANSWER_B(3), IMG_A(4), IMG_B(5), IMG_Q(6);
+    TXT_Q(1), TXT_A(2), TXT_B(3), IMG_Q(4), IMG_A(5), IMG_B(6);
 
-    private static final Set<Integer> img = Sets.newHashSet();
+    private static final Set<DetailType> img = Sets.newHashSet();
     private static final Map<Integer, DetailType> map = Maps.newHashMap();
     @Getter private final Integer value;
 
     static {
         Arrays.stream(DetailType.values())
                 .forEach(type -> map.put(type.value, type));
+
+        img.addAll(Arrays.asList(new DetailType[]{IMG_Q, IMG_A, IMG_B}));
     }
 
     DetailType(int value) {
@@ -31,10 +33,10 @@ public enum DetailType {
     }
 
     public boolean isImgType(){
-        return checkImgType(this.value);
+        return checkImgType(this);
     }
 
-    public static boolean checkImgType(Integer value){
-        return img.contains(value);
+    public static boolean checkImgType(DetailType type){
+        return img.contains(type);
     }
 }

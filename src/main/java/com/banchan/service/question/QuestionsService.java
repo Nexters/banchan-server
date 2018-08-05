@@ -23,6 +23,8 @@ public class QuestionsService {
     @Transactional
     public Questions add(QuestionCard questionCard){
 
+        // questionCard 필요 조건 명시
+
         Questions question = questionsRepository.save(
                 Questions.builder()
                         .userId(questionCard.getUserId())
