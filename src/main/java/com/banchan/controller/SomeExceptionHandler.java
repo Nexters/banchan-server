@@ -1,6 +1,6 @@
 package com.banchan.controller;
 
-import com.banchan.exception.SomeException;
+import com.banchan.model.exception.SomeException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

@@ -1,49 +1,36 @@
 package com.banchan.controller;
 
-import com.banchan.domain.question.DetailType;
-import com.banchan.dto.QuestionCardData;
-import com.banchan.repository.QuestionDetailsRepository;
-import com.banchan.repository.QuestionsRepository;
-import com.banchan.service.question.AwsS3Service;
-import com.banchan.service.question.QuestionCardService;
+import com.banchan.model.entity.Votes;
+import com.banchan.model.response.CommonResponse;
+import com.banchan.model.vo.QuestionCard;
+import com.banchan.service.question.QuestionsService;
+import com.banchan.service.question.VotesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api")
 public class APIController {
 
-    @Autowired QuestionCardService questionCardService;
-    @Autowired QuestionDetailsRepository questionDetailsRepository;
-    @Autowired QuestionsRepository questionsRepository;
-    @Autowired AwsS3Service awsS3Service;
+    @Autowired VotesService votesService;
+    @Autowired QuestionsService questionsService;
 
-    @RequestMapping(value = "questionCards", method = RequestMethod.GET)
-    public ResponseEntity<?> questionCards(){
-        return ResponseEntity.ok(questionCardService.questionCards());
+    @RequestMapping(value = "vote", method = RequestMethod.POST)
+    public CommonResponse<?> addVote(@RequestBody Votes vote){
+        return CommonResponse.success(votesService.add(vote));
     }
 
-    @RequestMapping("QuestionCardsData")
-    public List<QuestionCardData> QuestionCardsData(){
-        return questionsRepository.findAllQuestionCardData();
+    @RequestMapping(value = "questionCard", method = RequestMethod.POST)
+    public CommonResponse<?> addQuestions(@Valid @RequestBody QuestionCard questionCard, BindingResult bindingResult){
+        if(bindingResult.hasErrors()) return CommonResponse.FAIL;
+
+        return CommonResponse.success(questionsService.add(questionCard));
     }
 
-    @RequestMapping("test")
-    public String helloWorld(){
-        return "Hello World";
-    }
-
-    @RequestMapping(value = "imgUpload", method = RequestMethod.POST)
-    public ResponseEntity<?> imgUpload(@RequestBody MultipartFile multipartFile){
-        awsS3Service.upload(DetailType.IMG_Q.name(), multipartFile);
-        return ResponseEntity.status(HttpStatus.OK).body("img upload success");
-    }
 }
