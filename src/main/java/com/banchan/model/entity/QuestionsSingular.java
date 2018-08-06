@@ -3,7 +3,6 @@ package com.banchan.model.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -20,14 +19,6 @@ public class QuestionsSingular {
     @Column(name = "random_order")
     private Integer randomOrder;
 
-    @Column(name="write_time")
-    private LocalDateTime writeTime;
-
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "question_id")
     private List<QuestionDetails> questionDetails;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
-    private List<Votes> votes;
 }

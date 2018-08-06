@@ -1,5 +1,6 @@
 package com.banchan.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class Questions {
     @Column(name = "random_order")
     private Integer randomOrder;
 
+    @JsonIgnore
     @Column(name = "write_time")
     private LocalDateTime writeTime;
 }
