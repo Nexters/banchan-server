@@ -1,7 +1,7 @@
 package com.banchan.model.entity;
 
-import com.banchan.model.domain.question.DetailTypeAttributeConverter;
 import com.banchan.model.domain.question.DetailType;
+import com.banchan.model.domain.question.DetailTypeAttributeConverter;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +11,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "question_details")
 @Builder
-public class QuestionDetails {
+public class QuestionDetailsSingular {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,6 +24,7 @@ public class QuestionDetails {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "question_id")
-    private Integer questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Questions question;
 }

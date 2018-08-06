@@ -10,6 +10,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface VotesBRepository extends JpaRepository<VotesB, Integer> {
 
-    @Query("SELECT COUNT(v) FROM VotesB v WHERE v.question IN (:questionsList) GROUP BY v.question")
+    @Query("SELECT COUNT(v) FROM VotesB v WHERE v.question IN (:questionsList) GROUP BY v.question ORDER BY v.question.id ASC")
     CompletableFuture<List<Long>> countByQuestionInGroupByQuestion(List<Questions> questionsList);
 }
