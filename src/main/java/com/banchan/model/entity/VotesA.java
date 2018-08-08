@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -20,4 +21,7 @@ public class VotesA {
 
     @Column(name = "question_id")
     private Integer questionId;
+
+    @Column(name = "vote_time")
+    private LocalDateTime voteTime;
 }

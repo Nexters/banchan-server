@@ -23,11 +23,11 @@ public class QuestionCard {
     private Integer userId;
 
     @Size(min = 3, max = 6) // enum valid 도 찾아보거나 만들어보자
-    private Map<DetailType, String> details;
+    private Map<DetailType, String> detail;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private VoteCount voteCount;
+    private VoteCount vote;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long commentCount;
+    private Long comment;
 }

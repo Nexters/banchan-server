@@ -59,7 +59,7 @@ public class CommonResponse<T> {
             this.reason = reason;
         }
 
-        public ResponseBuilder String(String reason){
+        public ResponseBuilder reason(String reason){
             this.reason = reason;
             return this;
         }

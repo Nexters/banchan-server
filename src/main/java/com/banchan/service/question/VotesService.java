@@ -10,6 +10,7 @@ import com.banchan.repository.VotesBRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,12 +29,14 @@ public class VotesService {
                 votesARepository.save(VotesA.builder()
                         .questionId(vote.getQuestionId())
                         .userId(vote.getUserId())
+                        .voteTime(LocalDateTime.now())
                         .build());
                 break;
             case B:
                 votesBRepository.save(VotesB.builder()
                         .questionId(vote.getQuestionId())
                         .userId(vote.getUserId())
+                        .voteTime(LocalDateTime.now())
                         .build());
                 break;
             default:

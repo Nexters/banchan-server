@@ -7,6 +7,7 @@ import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionsRepository;
 import one.util.streamex.EntryStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -42,7 +43,7 @@ public class QuestionsService {
 
         questionDetailsService.add(
                 question.getId(),
-                EntryStream.of(questionCard.getDetails())
+                EntryStream.of(questionCard.getDetail())
                         .peek(detail -> detail.setValue(
                                 detail.getKey().isImgType() ?
                                         imageUploader.upload(
@@ -54,13 +55,24 @@ public class QuestionsService {
         return question;
     }
 
-    public List<QuestionCard> findNotSelectedQuestionCard(int randomOrder, int userId, int count){
-        List<Questions> questions = questionsRepository.findNotSelectedQuestions(randomOrder, userId, count);
+//    public List<QuestionCard> findVotedQuestionCard(int userId, int page, int count){
+//
+//    }
 
-        return findQuestionCardByQuestions(questions);
+    public List<QuestionCard> findUserMadeQuestionCard(int userId, int page, int count){
+        return this.findQuestionCardByQuestions(
+                questionsRepository.findAllByUserIdOrderByDecisionAscIdDesc(userId, PageRequest.of(page, count))
+                        .getContent());
+    }
+
+    public List<QuestionCard> findNotVotedQuestionCard(int userId, int lastOrder, int count){
+        return findQuestionCardByQuestions(
+                questionsRepository.findNotVotedQuestions(userId, lastOrder, count));
     }
 
     private List<QuestionCard> findQuestionCardByQuestions(List<Questions> questions){
+        // questions 갯수가 0이면 예외 처리 (도현 누나가 말한 거)
+
         List<Integer> questionIds = questions.stream().map(Questions::getId).collect(Collectors.toList());
 
         try {
@@ -90,8 +102,8 @@ public class QuestionsService {
                         .id(question.getId())
                         .order(question.getRandomOrder())
                         .userId(question.getUserId())
-                        .details(detailMap.get(question.getId()))
-                        .voteCount(voteCountMap.get(question.getId()))
+                        .detail(detailMap.get(question.getId()))
+                        .vote(voteCountMap.get(question.getId()))
                         .build())
                 .collect(Collectors.toList());
     }

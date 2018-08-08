@@ -52,7 +52,7 @@ public class APIController {
 
     @RequestMapping(value = "questions", method = RequestMethod.GET)
     public CommonResponse<?> findQuestions(){
-        return CommonResponse.success(questionsRepository.findNotSelectedQuestions(-1, 3, 50));
+        return CommonResponse.success(questionsRepository.findNotVotedQuestions(-1, 3, 50));
     }
 
     @RequestMapping(value = "questionDetails", method = RequestMethod.GET)
@@ -63,6 +63,11 @@ public class APIController {
 
     @RequestMapping(value = "notSelectedQuestions", method = RequestMethod.GET)
     public CommonResponse<?> findNotSelectedQuestions() {
-        return CommonResponse.success(questionsService.findNotSelectedQuestionCard(-1, 3, 50));
+        return CommonResponse.success(questionsService.findNotVotedQuestionCard(3, 0, 50));
+    }
+
+    @RequestMapping(value = "userMadeQuestions", method = RequestMethod.GET)
+    public CommonResponse<?> userMadeQuestions() {
+        return CommonResponse.success(questionsService.findUserMadeQuestionCard(1, 0, 10));
     }
 }
