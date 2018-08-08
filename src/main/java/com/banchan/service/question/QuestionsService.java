@@ -56,6 +56,11 @@ public class QuestionsService {
 
     public List<QuestionCard> findNotSelectedQuestionCard(int randomOrder, int userId, int count){
         List<Questions> questions = questionsRepository.findNotSelectedQuestions(randomOrder, userId, count);
+
+        return findQuestionCardByQuestions(questions);
+    }
+
+    private List<QuestionCard> findQuestionCardByQuestions(List<Questions> questions){
         List<Integer> questionIds = questions.stream().map(Questions::getId).collect(Collectors.toList());
 
         try {

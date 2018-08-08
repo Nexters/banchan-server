@@ -1,5 +1,6 @@
 package com.banchan.model.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "votes_b")
+@Builder
 public class VotesB {
 
     @Id

@@ -1,7 +1,7 @@
 package com.banchan.controller;
 
 import com.banchan.model.entity.Questions;
-import com.banchan.model.entity.Votes;
+import com.banchan.model.dto.Vote;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.repository.QuestionsRepository;
@@ -33,7 +33,7 @@ public class APIController {
     QuestionDetailsService questionDetailsService;
 
     @RequestMapping(value = "vote", method = RequestMethod.POST)
-    public CommonResponse<?> addVote(@RequestBody Votes vote){
+    public CommonResponse<?> addVote(@RequestBody Vote vote){
         return CommonResponse.success(votesService.add(vote));
     }
 

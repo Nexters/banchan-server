@@ -1,11 +1,12 @@
 package com.banchan.service.question;
 
+import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.VoteCountData;
-import com.banchan.model.entity.Votes;
+import com.banchan.model.entity.VotesA;
+import com.banchan.model.entity.VotesB;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.VotesARepository;
 import com.banchan.repository.VotesBRepository;
-import com.banchan.repository.VotesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,25 @@ public class VotesService {
     @Autowired VotesARepository votesARepository;
     @Autowired VotesBRepository votesBRepository;
 
-    @Autowired VotesRepository votesRepository;
+    public Vote add(Vote vote){
+        switch(vote.getAnswer()){
+            case A:
+                votesARepository.save(VotesA.builder()
+                        .questionId(vote.getQuestionId())
+                        .userId(vote.getUserId())
+                        .build());
+                break;
+            case B:
+                votesBRepository.save(VotesB.builder()
+                        .questionId(vote.getQuestionId())
+                        .userId(vote.getUserId())
+                        .build());
+                break;
+            default:
+                throw new IllegalArgumentException("적합하지 않은 AnswerType 입니다.");
+        }
 
-    public Votes add(Votes vote){
-        return votesRepository.save(vote);
+        return vote;
     }
 
     public CompletableFuture<Map<Integer, VoteCount>> findVoteCount(List<Integer> questionIds){
