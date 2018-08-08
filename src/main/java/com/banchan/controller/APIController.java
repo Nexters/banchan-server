@@ -1,10 +1,10 @@
 package com.banchan.controller;
 
+import com.banchan.model.entity.Questions;
 import com.banchan.model.entity.Votes;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.repository.QuestionsRepository;
-import com.banchan.repository.QuestionsSingularRepository;
 import com.banchan.service.question.QuestionDetailsService;
 import com.banchan.service.question.QuestionsService;
 import com.banchan.service.question.VotesService;
@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api")
@@ -25,8 +27,6 @@ public class APIController {
     @Autowired QuestionsService questionsService;
 
     // For Test
-    @Autowired
-    QuestionsSingularRepository questionsSingularRepository;
     @Autowired
     QuestionsRepository questionsRepository;
     @Autowired
@@ -45,17 +45,24 @@ public class APIController {
     }
 
     @RequestMapping(value = "voteCount", method = RequestMethod.GET)
-    public CommonResponse<?> findVoteCount(){
-        return CommonResponse.success(votesService.findVoteCount(questionsRepository.findAll()));
+    public CommonResponse<?> findVoteCount() throws ExecutionException, InterruptedException {
+        return CommonResponse.success(votesService.findVoteCount(questionsRepository.findAll().stream()
+                .map(Questions::getId).collect(Collectors.toList())).get());
     }
 
     @RequestMapping(value = "questions", method = RequestMethod.GET)
     public CommonResponse<?> findQuestions(){
-        return CommonResponse.success(questionsRepository.findNotSelectedQuestions());
+        return CommonResponse.success(questionsRepository.findNotSelectedQuestions(-1, 3, 50));
     }
 
     @RequestMapping(value = "questionDetails", method = RequestMethod.GET)
-    public CommonResponse<?> findQuestionDetails(){
-        return CommonResponse.success(questionDetailsService.findQuestionDetails(questionsRepository.findAll()));
+    public CommonResponse<?> findQuestionDetails() throws ExecutionException, InterruptedException {
+        return CommonResponse.success(questionDetailsService.findQuestionDetails(questionsRepository.findAll().stream()
+                .map(Questions::getId).collect(Collectors.toList())).get());
+    }
+
+    @RequestMapping(value = "notSelectedQuestions", method = RequestMethod.GET)
+    public CommonResponse<?> findNotSelectedQuestions() {
+        return CommonResponse.success(questionsService.findNotSelectedQuestionCard(-1, 3, 50));
     }
 }

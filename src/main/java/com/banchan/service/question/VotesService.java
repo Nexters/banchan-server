@@ -1,17 +1,18 @@
 package com.banchan.service.question;
 
-import com.banchan.model.entity.Questions;
+import com.banchan.model.dto.VoteCountData;
 import com.banchan.model.entity.Votes;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.VotesARepository;
 import com.banchan.repository.VotesBRepository;
 import com.banchan.repository.VotesRepository;
-import com.google.common.collect.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,17 +27,26 @@ public class VotesService {
         return votesRepository.save(vote);
     }
 
-    public List<VoteCount> findVoteCount(List<Questions> questionsList){
+    public CompletableFuture<Map<Integer, VoteCount>> findVoteCount(List<Integer> questionIds){
 
-        try {
+        return votesARepository.countByQuestionIdInGroupByQuestion(questionIds)
+                .thenCombine(votesBRepository.countByQuestionIdInGroupByQuestion(questionIds),
+                        (countA, countB) -> {
+                            Map<Integer, Long> mapA = countA.stream()
+                                    .collect(Collectors.toMap(
+                                            VoteCountData::getQuestionId,
+                                            VoteCountData::getCount));
+                            Map<Integer, Long> mapB = countB.stream()
+                                    .collect(Collectors.toMap(
+                                            VoteCountData::getQuestionId,
+                                            VoteCountData::getCount));
 
-            return votesARepository.countByQuestionInGroupByQuestion(questionsList)
-                    .thenCombine(votesBRepository.countByQuestionInGroupByQuestion(questionsList),
-                            (countA, countB) ->
-                                    Streams.zip(countA.stream(), countB.stream(), VoteCount::new)
-                                            .collect(Collectors.toList())).get();
-
-        } catch (InterruptedException e) { throw new RuntimeException(e);
-        } catch (ExecutionException e) { throw new RuntimeException(e); }
+                            return questionIds.stream()
+                                    .collect(Collectors.toMap(
+                                            questionId -> questionId,
+                                            questionId -> new VoteCount(
+                                                    Optional.ofNullable(mapA.get(questionId)).orElse((long) 0),
+                                                    Optional.ofNullable(mapB.get(questionId)).orElse((long) 0))));
+                        });
     }
 }

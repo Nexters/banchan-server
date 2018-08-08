@@ -15,11 +15,7 @@ public class VotesA {
 
     @Column(name = "user_id")
     private Integer userId;
-//
-//    @Column(name = "question_id")
-//    private Integer QuestionId;
 
-    @ManyToOne
-    @JoinColumn(name = "question_id")
-    private Questions question;
+    @Column(name = "question_id")
+    private Integer questionId;
 }
