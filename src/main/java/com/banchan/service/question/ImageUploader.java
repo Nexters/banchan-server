@@ -49,7 +49,7 @@ public class ImageUploader {
                 .map(Strings::nullToEmpty)
                 .filter(mimeType -> mimeType.startsWith("image/"))
                 .map(mimeType -> mimeType.replaceAll("image/", "."))
-                .findAny()
+                .findFirst()
                 .orElseThrow(() -> new ImageUploadException("파일 형식이 맞지 않습니다"));
     }
 }

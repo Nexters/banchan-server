@@ -1,10 +1,14 @@
 package com.banchan.model.vo;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 
-@Value
-@Builder
+@Data
 public class VoteCount {
-    long ansA, ansB, total;
+    private final long a, b, total;
+
+    public VoteCount(long a, long b){
+        this.a = a;
+        this.b = b;
+        this.total = a + b;
+    }
 }

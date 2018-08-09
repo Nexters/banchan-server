@@ -42,8 +42,10 @@ public class CommonResponse<T> {
         return new ResponseBuilder(Type.FAIL);
     }
 
-    public static ResponseBuilder fail(String reason){
-        return new ResponseBuilder(Type.FAIL, reason);
+    public static CommonResponse<?> fail(String reason){
+        CommonResponse commonResponse = new CommonResponse(Type.FAIL);
+        commonResponse.setReason(reason);
+        return commonResponse;
     }
 
     public static class ResponseBuilder{
@@ -59,7 +61,7 @@ public class CommonResponse<T> {
             this.reason = reason;
         }
 
-        public ResponseBuilder String(String reason){
+        public ResponseBuilder reason(String reason){
             this.reason = reason;
             return this;
         }

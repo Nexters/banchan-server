@@ -3,13 +3,14 @@ package com.banchan.model.vo;
 import com.banchan.model.domain.question.DetailType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Map;
 
-@Value
+@Data
 @Builder
 public class QuestionCard {
 
@@ -23,11 +24,14 @@ public class QuestionCard {
     private Integer userId;
 
     @Size(min = 3, max = 6) // enum valid 도 찾아보거나 만들어보자
-    private Map<DetailType, String> details;
+    private Map<DetailType, String> detail;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private VoteCount voteCount;
+    private LocalDateTime writeTime;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long commentCount;
+    private VoteCount vote;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long comment;
 }

@@ -9,12 +9,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
 public class QuestionDetailsService {
 
-    @Autowired QuestionDetailsRepository questionDetailsRepository;
+    @Autowired private QuestionDetailsRepository questionDetailsRepository;
 
     public List<QuestionDetails> add(int questionId, Map<DetailType, String> details){
 
@@ -29,4 +30,15 @@ public class QuestionDetailsService {
 
     }
 
+    public CompletableFuture<Map<Integer, Map<DetailType, String>>> findQuestionDetails(List<Integer> questionIds){
+
+        return questionDetailsRepository.findALLByQuestionIdInOrderByQuestionIdAsc(questionIds)
+                .thenApply(details ->
+                        EntryStream.of(details.stream().collect(Collectors.groupingBy(QuestionDetails::getQuestionId)))
+                                .mapValues(questionDetailsSingulars -> questionDetailsSingulars.stream()
+                                        .collect(Collectors.toMap(
+                                                QuestionDetails::getType,
+                                                QuestionDetails::getContent)))
+                                .toMap());
+    }
 }

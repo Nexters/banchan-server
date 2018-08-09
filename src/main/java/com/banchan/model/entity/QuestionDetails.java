@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
+@Table(name = "question_details")
 @Builder
 public class QuestionDetails {
     @Id

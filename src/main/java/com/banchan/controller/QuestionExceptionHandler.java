@@ -1,10 +1,9 @@
 package com.banchan.controller;
 
-import com.banchan.model.exception.SomeException;
+import com.banchan.model.exception.QuestionException;
+import com.banchan.model.response.CommonResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,12 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestController
-public class SomeExceptionHandler {
+public class QuestionExceptionHandler {
 
-    @ExceptionHandler(SomeException.class)
-    public ResponseEntity<?> handleSomeException(HttpServletRequest request, SomeException ex){
+    @ExceptionHandler(QuestionException.class)
+    public CommonResponse<?> handleSomeException(HttpServletRequest request, QuestionException ex){
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex);
+        return CommonResponse.fail(ex.getMessage());
     }
 
 }

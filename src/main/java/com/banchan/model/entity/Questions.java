@@ -1,5 +1,7 @@
 package com.banchan.model.entity;
 
+import com.banchan.model.domain.question.AnswerType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,7 +9,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
-@Entity(name = "questions")
+@Entity
+@Table(name = "questions")
 @Builder
 public class Questions {
 
@@ -21,6 +24,10 @@ public class Questions {
     @Column(name = "random_order")
     private Integer randomOrder;
 
+    @Column(name = "decision")
+    private AnswerType decision;
+
+    @JsonIgnore
     @Column(name = "write_time")
     private LocalDateTime writeTime;
 }
