@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
@@ -24,6 +25,9 @@ public class QuestionCard {
 
     @Size(min = 3, max = 6) // enum valid 도 찾아보거나 만들어보자
     private Map<DetailType, String> detail;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime writeTime;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private VoteCount vote;

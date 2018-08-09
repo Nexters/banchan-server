@@ -61,13 +61,18 @@ public class APIController {
                 .map(Questions::getId).collect(Collectors.toList())).get());
     }
 
-    @RequestMapping(value = "notSelectedQuestions", method = RequestMethod.GET)
-    public CommonResponse<?> findNotSelectedQuestions() {
+    @RequestMapping(value = "notVotedQuestions", method = RequestMethod.GET)
+    public CommonResponse<?> findNotVotedQuestions() {
         return CommonResponse.success(questionsService.findNotVotedQuestionCard(3, 0, 50));
     }
 
     @RequestMapping(value = "userMadeQuestions", method = RequestMethod.GET)
     public CommonResponse<?> userMadeQuestions() {
-        return CommonResponse.success(questionsService.findUserMadeQuestionCard(1, 0, 10));
+        return CommonResponse.success(questionsService.findUserMadeQuestionCard(1, 1, 10));
+    }
+
+    @RequestMapping(value = "votedQuestions", method = RequestMethod.GET)
+    public CommonResponse<?> findVotedQuestions() {
+        return CommonResponse.success(questionsService.findVotedQuestionCard(2, 0, 10));
     }
 }

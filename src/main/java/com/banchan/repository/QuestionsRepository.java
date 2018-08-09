@@ -32,15 +32,16 @@ public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
 
     Page<Questions> findAllByUserIdOrderByDecisionAscIdDesc(Integer userId, Pageable pageable);
 
-    @Query(value = "SELECT * FROM questions q\n" +
-            "  JOIN (\n" +
-            "    (SELECT question_id, vote_time FROM votes_a\n" +
-            "    WHERE user_id = 2)\n" +
-            "    UNION ALL\n" +
-            "    (SELECT question_id, vote_time FROM votes_b\n" +
-            "    WHERE user_id = 2)) v\n" +
-            "    ON q.id = v.question_id\n" +
-            "ORDER BY v.vote_time DESC",
+    @Query(value = "SELECT * " +
+                    "FROM questions q " +
+                    "JOIN ( " +
+                    "    (SELECT question_id, vote_time FROM votes_a " +
+                    "    WHERE user_id = 2) " +
+                    "    UNION ALL " +
+                    "    (SELECT question_id, vote_time FROM votes_b " +
+                    "    WHERE user_id = 2)) v " +
+                    "    ON q.id = v.question_id " +
+                    "ORDER BY v.vote_time DESC ",
             nativeQuery = true
     )
     Page<Questions> findVotedQuestions(@Param("userId") int userId, Pageable pageable);

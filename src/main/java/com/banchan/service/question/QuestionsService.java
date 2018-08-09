@@ -2,6 +2,7 @@ package com.banchan.service.question;
 
 import com.banchan.model.domain.question.DetailType;
 import com.banchan.model.entity.Questions;
+import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionsRepository;
@@ -55,9 +56,11 @@ public class QuestionsService {
         return question;
     }
 
-//    public List<QuestionCard> findVotedQuestionCard(int userId, int page, int count){
-//
-//    }
+    public List<QuestionCard> findVotedQuestionCard(int userId, int page, int count){
+        return this.findQuestionCardByQuestions(
+                questionsRepository.findVotedQuestions(userId, PageRequest.of(page, count))
+                .getContent());
+    }
 
     public List<QuestionCard> findUserMadeQuestionCard(int userId, int page, int count){
         return this.findQuestionCardByQuestions(
@@ -71,7 +74,7 @@ public class QuestionsService {
     }
 
     private List<QuestionCard> findQuestionCardByQuestions(List<Questions> questions){
-        // questions 갯수가 0이면 예외 처리 (도현 누나가 말한 거)
+        if(questions == null || questions.size() == 0) throw new QuestionException("QuestionNotFound");
 
         List<Integer> questionIds = questions.stream().map(Questions::getId).collect(Collectors.toList());
 
@@ -104,6 +107,7 @@ public class QuestionsService {
                         .userId(question.getUserId())
                         .detail(detailMap.get(question.getId()))
                         .vote(voteCountMap.get(question.getId()))
+                        .writeTime(question.getWriteTime())
                         .build())
                 .collect(Collectors.toList());
     }
