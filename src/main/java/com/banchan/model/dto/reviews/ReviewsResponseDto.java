@@ -14,6 +14,7 @@ public class ReviewsResponseDto {
     private Integer questionId;
     private Integer uesrId;
     private String content;
+    private Integer reportState;
     private String createdAt;
     private String updatedAt;
 
@@ -22,6 +23,7 @@ public class ReviewsResponseDto {
         this.questionId = entity.getQuestionId();
         this.uesrId = entity.getUesrId();
         this.content = entity.getContent();
+        this.reportState = entity.getReportState();
         this.createdAt = toStringDateTime(entity.getCreatedAt());
         this.updatedAt = toStringDateTime(entity.getUpdatedAt());
     }
