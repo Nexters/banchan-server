@@ -1,5 +1,6 @@
 package com.banchan.controller;
 
+import com.banchan.model.dto.reviews.ReportRequestDto;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.dto.Vote;
 import com.banchan.model.response.CommonResponse;
@@ -10,10 +11,7 @@ import com.banchan.service.question.QuestionsService;
 import com.banchan.service.question.VotesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.concurrent.ExecutionException;
@@ -74,5 +72,17 @@ public class APIController {
     @RequestMapping(value = "votedQuestions", method = RequestMethod.GET)
     public CommonResponse<?> findVotedQuestions() {
         return CommonResponse.success(questionsService.findVotedQuestionCard(2, 0, 10));
+    }
+
+    /**
+     * 질문카드 신고 (신고 테이블에 저장하고 해당 질문카드에 신고가 REPORT_MAX_SIZE 이상이면 해당 질문카드 조회 안됨)
+     * @param dto | 질문카드 신고용 RequestDto (속성 : userId, questionId)
+     */
+    @PostMapping("question/report")
+    public CommonResponse<?> reportQuestion (@RequestBody ReportRequestDto dto) {
+        if (questionsService.isOverlap(dto)) {
+            return CommonResponse.fail("동일한 유저가 중복 신고");
+        }
+        return CommonResponse.success(questionsService.saveReport(dto));
     }
 }

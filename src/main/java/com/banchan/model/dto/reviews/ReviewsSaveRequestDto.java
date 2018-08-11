@@ -1,4 +1,4 @@
-package com.banchan.model.dto;
+package com.banchan.model.dto.reviews;
 
 import com.banchan.model.entity.Reviews;
 import lombok.Getter;

@@ -13,8 +13,8 @@ import java.util.concurrent.CompletableFuture;
 
 public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
 
-    @Query(value = "SELECT q.id, q.user_id, q.random_order, q.write_time, q.decision " +
-                    "FROM (SELECT id, user_id, random_order, write_time, decision " +
+    @Query(value = "SELECT q.id, q.user_id, q.random_order, q.write_time, q.decision, q.report_state " +
+                    "FROM (SELECT id, user_id, random_order, write_time, decision, report_state " +
                     "   FROM  questions " +
                     "   WHERE random_order > :randomOrder AND decision IS NULL) q " +
                     "LEFT JOIN ( " +

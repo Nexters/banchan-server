@@ -14,4 +14,8 @@ public class AnswerTypeTest {
             Assertions.assertEquals(answerType, AnswerType.valueOf(answerType.getValue()));
         }
     }
+    @Test
+    public void valueOfIllegalValue(){
+        Assertions.assertThrows(IllegalStateException.class, () -> AnswerType.valueOf(false));
+    }
 }

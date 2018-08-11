@@ -30,4 +30,11 @@ public class Questions {
     @JsonIgnore
     @Column(name = "write_time")
     private LocalDateTime writeTime;
+
+    @Column(name = "report_state")
+    private Integer reportState;
+
+    public void report() {
+        this.reportState = 1;
+    }
 }
