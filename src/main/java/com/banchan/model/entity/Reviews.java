@@ -50,5 +50,8 @@ public class Reviews extends BaseTimeEntity {
         this.deleteState = 1;
     }
 
+    public void report() {
+        this.reportState = 1;
+    }
 }
 

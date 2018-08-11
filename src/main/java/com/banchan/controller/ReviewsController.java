@@ -1,7 +1,8 @@
 package com.banchan.controller;
 
-import com.banchan.model.dto.ReviewsSaveRequestDto;
-import com.banchan.model.dto.ReviewsUpdateRequestDto;
+import com.banchan.model.dto.reviews.ReviewsReportRequestDto;
+import com.banchan.model.dto.reviews.ReviewsSaveRequestDto;
+import com.banchan.model.dto.reviews.ReviewsUpdateRequestDto;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.repository.ReviewsRepository;
 import com.banchan.service.reviews.ReviewsService;
@@ -53,5 +54,17 @@ public class ReviewsController {
     @DeleteMapping("{deleteReviewId}")
     public CommonResponse<?> deleteReview (@PathVariable("deleteReviewId") int deleteReviewId) {
         return CommonResponse.success(reviewsService.delete(deleteReviewId));
+    }
+
+    /**
+     * 댓글 신고 (신고 테이블에 저장하고 해당 질문에 신고가 REPORT_MAX_SIZE 이상이면 해당 댓글 조회 안됨)
+     * @param dto | 댓글 신고용 RequestDto (속성 : userId, reviewId)
+     */
+    @PostMapping("report")
+    public CommonResponse<?> reportReview (@RequestBody ReviewsReportRequestDto dto) {
+        if (reviewsService.isOverlap(dto)) {
+            return CommonResponse.fail("동일한 유저가 중복 신고");
+        }
+        return CommonResponse.success(reviewsService.saveReport(dto));
     }
 }
