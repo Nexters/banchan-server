@@ -11,7 +11,6 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Integer> {
     @Query(value = "SELECT * FROM reviews " +
             "WHERE " +
             "question_id = :questionId " +
-            "AND report_state = 0 " +
             "AND delete_state = 0 " +
             "AND id < :lastReviewId " +
             "ORDER BY created_at DESC " +
