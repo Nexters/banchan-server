@@ -13,4 +13,15 @@ public interface VotesARepository extends JpaRepository<VotesA, Integer> {
 
     @Query("SELECT NEW com.banchan.model.dto.VoteCountData(v.questionId, COUNT(v)) FROM VotesA v WHERE v.questionId IN (:questionIds) GROUP BY v.questionId")
     CompletableFuture<List<VoteCountData>> countByQuestionIdInGroupByQuestion(@Param("questionIds") List<Integer> questionIds);
+
+    @Query(
+            value = "SELECT SUM(cnt) FROM( " +
+                    "SELECT COUNT(*) cnt FROM votes_a " +
+                    "WHERE question_id = :questionId " +
+                    "UNION ALL " +
+                    "SELECT COUNT(*) cnt FROM votes_b " +
+                    "WHERE question_id = :questionId) v",
+            nativeQuery = true
+    )
+    CompletableFuture<Number> countAllByQuestionId(@Param("questionId") int questionId);
 }
