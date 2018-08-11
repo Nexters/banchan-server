@@ -11,12 +11,7 @@ public class AnswerTypeTest {
 
             Assertions.assertEquals(answerType, AnswerType.valueOf(answerType.toString()));
             //valueOf(int) check
-            Assertions.assertEquals(answerType, AnswerType.valueOf(answerType.intValue()));
+            Assertions.assertEquals(answerType, AnswerType.valueOf(answerType.getValue()));
         }
-    }
-
-    @Test
-    public void valueOfIllegalValue(){
-        Assertions.assertThrows(IllegalStateException.class, () -> AnswerType.valueOf(1000000));
     }
 }

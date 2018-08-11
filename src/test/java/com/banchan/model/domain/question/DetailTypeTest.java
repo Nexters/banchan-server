@@ -11,7 +11,7 @@ public class DetailTypeTest {
 
             Assertions.assertEquals(detailType, DetailType.valueOf(detailType.toString()));
             //valueOf(int) check
-            Assertions.assertEquals(detailType, DetailType.valueOf(detailType.intValue()));
+            Assertions.assertEquals(detailType, DetailType.valueOf(detailType.getValue()));
         }
     }
 }
