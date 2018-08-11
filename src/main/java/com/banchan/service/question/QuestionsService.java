@@ -1,11 +1,13 @@
 package com.banchan.service.question;
 
 import com.banchan.model.domain.question.DetailType;
+import com.banchan.model.dto.reviews.ReportRequestDto;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionsRepository;
+import com.banchan.repository.ReportsRepository;
 import one.util.streamex.EntryStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class QuestionsService {
 
     @Autowired private QuestionsRepository questionsRepository;
+    @Autowired private ReportsRepository reportsRepository;
 
     @Autowired private ImageUploader imageUploader;
     @Autowired private QuestionDetailsService questionDetailsService;
@@ -110,5 +113,27 @@ public class QuestionsService {
                         .writeTime(question.getWriteTime())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 신고 테이블에 저장. REPORT_MAX_SIZE 이상 신고되면 게시글 신고상태값 변경
+     */
+    final static int REPORT_MAX_SIZE = 5;
+    @Transactional
+    public Integer saveReport(ReportRequestDto dto) {
+        Integer questionId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
+        if (reportsRepository.countByQuestionId(dto.getQuestionId()) >= REPORT_MAX_SIZE) {
+            Questions question = questionsRepository.findById(dto.getQuestionId()).get();
+            question.report();
+            questionsRepository.save(question);
+        }
+        return questionId;
+    }
+
+    /**
+     * 동일한 사용자가 신고한것인지 중복 체크
+     */
+    public boolean isOverlap(ReportRequestDto dto) {
+        return reportsRepository.countByUserIdAndQuestionId(dto.getUserId(), dto.getQuestionId()) >= 1;
     }
 }

@@ -1,10 +1,9 @@
 package com.banchan.controller;
 
-import com.banchan.model.dto.reviews.ReviewsReportRequestDto;
+import com.banchan.model.dto.reviews.ReportRequestDto;
 import com.banchan.model.dto.reviews.ReviewsSaveRequestDto;
 import com.banchan.model.dto.reviews.ReviewsUpdateRequestDto;
 import com.banchan.model.response.CommonResponse;
-import com.banchan.repository.ReviewsRepository;
 import com.banchan.service.reviews.ReviewsService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/reviews")
 public class ReviewsController {
 
-    private ReviewsRepository reviewsRepository;
     private ReviewsService reviewsService;
 
     /**
@@ -61,7 +59,7 @@ public class ReviewsController {
      * @param dto | 댓글 신고용 RequestDto (속성 : userId, reviewId)
      */
     @PostMapping("report")
-    public CommonResponse<?> reportReview (@RequestBody ReviewsReportRequestDto dto) {
+    public CommonResponse<?> reportReview (@RequestBody ReportRequestDto dto) {
         if (reviewsService.isOverlap(dto)) {
             return CommonResponse.fail("동일한 유저가 중복 신고");
         }
