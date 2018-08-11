@@ -50,7 +50,7 @@ public class ReviewsService {
     /**
      * 신고 테이블에 저장. REPORT_MAX_SIZE 이상 신고되면 댓글 신고상태값 변경
      */
-    final static int REPORT_MAX_SIZE = 5;
+    final static int REPORT_MAX_SIZE = 10;
     @Transactional
     public Integer saveReport(ReportRequestDto dto) {
         Integer reportId = reportsRepository.save(dto.toReviewReportEntity()).getId();
