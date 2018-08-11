@@ -1,49 +1,74 @@
 package com.banchan.controller;
 
-import com.banchan.domain.question.DetailType;
-import com.banchan.dto.QuestionCardData;
-import com.banchan.repository.QuestionDetailsRepository;
+import com.banchan.model.dto.reviews.ReportRequestDto;
+import com.banchan.model.entity.Questions;
+import com.banchan.model.dto.Vote;
+import com.banchan.model.response.CommonResponse;
+import com.banchan.model.vo.QuestionCard;
 import com.banchan.repository.QuestionsRepository;
-import com.banchan.service.question.AwsS3Service;
-import com.banchan.service.question.QuestionCardService;
+import com.banchan.service.question.QuestionDetailsService;
+import com.banchan.service.question.QuestionsService;
+import com.banchan.service.question.VotesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api")
 public class APIController {
 
-    @Autowired QuestionCardService questionCardService;
-    @Autowired QuestionDetailsRepository questionDetailsRepository;
-    @Autowired QuestionsRepository questionsRepository;
-    @Autowired AwsS3Service awsS3Service;
+    @Autowired VotesService votesService;
+    @Autowired QuestionsService questionsService;
 
-    @RequestMapping(value = "questionCards", method = RequestMethod.GET)
-    public ResponseEntity<?> questionCards(){
-        return ResponseEntity.ok(questionCardService.questionCards());
+    // For Test
+    @Autowired
+    QuestionsRepository questionsRepository;
+    @Autowired
+    QuestionDetailsService questionDetailsService;
+
+    @RequestMapping(value = "vote", method = RequestMethod.POST)
+    public CommonResponse<?> addVote(@RequestBody Vote vote){
+        return CommonResponse.success(votesService.add(vote));
     }
 
-    @RequestMapping("QuestionCardsData")
-    public List<QuestionCardData> QuestionCardsData(){
-        return questionsRepository.findAllQuestionCardData();
+    @RequestMapping(value = "questionCard", method = RequestMethod.POST)
+    public CommonResponse<?> addQuestions(@Valid @RequestBody QuestionCard questionCard, BindingResult bindingResult){
+        if(bindingResult.hasErrors()) return CommonResponse.FAIL;
+
+        return CommonResponse.success(questionsService.add(questionCard));
     }
 
-    @RequestMapping("test")
-    public String helloWorld(){
-        return "Hello World";
+    @RequestMapping(value = "user/{userId}/notVotedQuestions/{lastOrder}/{count}", method = RequestMethod.GET)
+    public CommonResponse<?> findNotVotedQuestions(
+            @PathVariable("userId") int userId, @PathVariable("lastOrder") int lastOrder, @PathVariable("count") int count) {
+        return CommonResponse.success(questionsService.findNotVotedQuestionCard(userId, lastOrder, count));
     }
 
-    @RequestMapping(value = "imgUpload", method = RequestMethod.POST)
-    public ResponseEntity<?> imgUpload(@RequestBody MultipartFile multipartFile){
-        awsS3Service.upload(DetailType.IMG_Q.name(), multipartFile);
-        return ResponseEntity.status(HttpStatus.OK).body("img upload success");
+    @RequestMapping(value = "user/{userId}/userMadeQuestions/{page}/{count}", method = RequestMethod.GET)
+    public CommonResponse<?> userMadeQuestions(
+            @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
+        return CommonResponse.success(questionsService.findUserMadeQuestionCard(userId, page, count));
+    }
+
+    @RequestMapping(value = "user/{userId}/votedQuestions/{page}/{count}", method = RequestMethod.GET)
+    public CommonResponse<?> findVotedQuestions(
+            @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
+        return CommonResponse.success(questionsService.findVotedQuestionCard(userId, page, count));
+    }
+
+    /**
+     * 질문카드 신고 (신고 테이블에 저장하고 해당 질문카드에 신고가 REPORT_MAX_SIZE 이상이면 해당 질문카드 조회 안됨)
+     * @param dto | 질문카드 신고용 RequestDto (속성 : userId, questionId)
+     */
+    @PostMapping("question/report")
+    public CommonResponse<?> reportQuestion (@RequestBody ReportRequestDto dto) {
+        if (questionsService.isOverlap(dto)) {
+            return CommonResponse.fail("동일한 유저가 중복 신고");
+        }
+        return CommonResponse.success(questionsService.saveReport(dto));
     }
 }
