@@ -42,36 +42,22 @@ public class APIController {
         return CommonResponse.success(questionsService.add(questionCard));
     }
 
-    @RequestMapping(value = "voteCount", method = RequestMethod.GET)
-    public CommonResponse<?> findVoteCount() throws ExecutionException, InterruptedException {
-        return CommonResponse.success(votesService.findVoteCount(questionsRepository.findAll().stream()
-                .map(Questions::getId).collect(Collectors.toList())).get());
+    @RequestMapping(value = "user/{userId}/notVotedQuestions/{lastOrder}/{count}", method = RequestMethod.GET)
+    public CommonResponse<?> findNotVotedQuestions(
+            @PathVariable("userId") int userId, @PathVariable("lastOrder") int lastOrder, @PathVariable("count") int count) {
+        return CommonResponse.success(questionsService.findNotVotedQuestionCard(userId, lastOrder, count));
     }
 
-    @RequestMapping(value = "questions", method = RequestMethod.GET)
-    public CommonResponse<?> findQuestions(){
-        return CommonResponse.success(questionsRepository.findNotVotedQuestions(-1, 3, 50));
+    @RequestMapping(value = "user/{userId}/userMadeQuestions/{page}/{count}", method = RequestMethod.GET)
+    public CommonResponse<?> userMadeQuestions(
+            @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
+        return CommonResponse.success(questionsService.findUserMadeQuestionCard(userId, page, count));
     }
 
-    @RequestMapping(value = "questionDetails", method = RequestMethod.GET)
-    public CommonResponse<?> findQuestionDetails() throws ExecutionException, InterruptedException {
-        return CommonResponse.success(questionDetailsService.findQuestionDetails(questionsRepository.findAll().stream()
-                .map(Questions::getId).collect(Collectors.toList())).get());
-    }
-
-    @RequestMapping(value = "notVotedQuestions", method = RequestMethod.GET)
-    public CommonResponse<?> findNotVotedQuestions() {
-        return CommonResponse.success(questionsService.findNotVotedQuestionCard(3, 0, 50));
-    }
-
-    @RequestMapping(value = "userMadeQuestions", method = RequestMethod.GET)
-    public CommonResponse<?> userMadeQuestions() {
-        return CommonResponse.success(questionsService.findUserMadeQuestionCard(1, 1, 10));
-    }
-
-    @RequestMapping(value = "votedQuestions", method = RequestMethod.GET)
-    public CommonResponse<?> findVotedQuestions() {
-        return CommonResponse.success(questionsService.findVotedQuestionCard(2, 0, 10));
+    @RequestMapping(value = "user/{userId}/votedQuestions/{page}/{count}", method = RequestMethod.GET)
+    public CommonResponse<?> findVotedQuestions(
+            @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
+        return CommonResponse.success(questionsService.findVotedQuestionCard(userId, page, count));
     }
 
     /**
