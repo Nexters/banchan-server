@@ -9,6 +9,7 @@ import com.banchan.repository.QuestionsRepository;
 import com.banchan.service.question.QuestionDetailsService;
 import com.banchan.service.question.QuestionsService;
 import com.banchan.service.question.VotesService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -65,9 +66,10 @@ public class APIController {
      * @param dto | 질문카드 신고용 RequestDto (속성 : userId, questionId)
      */
     @PostMapping("question/report")
+    @ApiOperation(value = "질문 신고", notes = "동일한 유저가 동일한 질문을 신고한 경우 fail | reason : isOverlap")
     public CommonResponse<?> reportQuestion (@RequestBody ReportRequestDto dto) {
         if (questionsService.isOverlap(dto)) {
-            return CommonResponse.fail("동일한 유저가 중복 신고");
+            return CommonResponse.fail("isOverlap");
         }
         return CommonResponse.success(questionsService.saveReport(dto));
     }
