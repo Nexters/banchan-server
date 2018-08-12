@@ -27,7 +27,9 @@ public class QuestionController {
                     "questionId - 어떤 질문에 투표를 하였는지 / " +
                     "random: true or false - 이 질문에 랜덤 딱지가 붙었는지 / " +
                     "userId - 어떤 유저가 투표했는지 / " +
-                    "응답: 리워드 (단위 %) "
+                    "응답: 리워드 (단위 %) / " +
+                    "유저가 질문 작성자일 경우 질문에 최종 결정을 하게 됨 / " +
+                    "응답: 영향 받은 사람 수 (현재는 -1이 리턴)"
     )
     @RequestMapping(value = "vote", method = RequestMethod.POST)
     public CommonResponse<?> addVote(@RequestBody Vote vote){
