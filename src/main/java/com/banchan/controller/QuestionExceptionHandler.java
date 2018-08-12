@@ -17,7 +17,6 @@ public class QuestionExceptionHandler {
 
     @ExceptionHandler(QuestionException.class)
     public CommonResponse<?> handleSomeException(HttpServletRequest request, QuestionException ex){
-
         return CommonResponse.fail(ex.getMessage());
     }
 

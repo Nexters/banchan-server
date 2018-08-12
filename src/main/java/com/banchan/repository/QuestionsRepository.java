@@ -7,16 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
 
     @Query(value = "SELECT q.id, q.user_id, q.random_order, q.write_time, q.decision, q.report_state " +
                     "FROM (SELECT id, user_id, random_order, write_time, decision, report_state " +
                     "   FROM  questions " +
-                    "   WHERE random_order > :randomOrder AND decision IS NULL) q " +
+                    "   WHERE random_order > :randomOrder AND decision IS NULL AND report_state = 0 AND user_id != :userId) q " +
                     "LEFT JOIN ( " +
                     "   (SELECT * FROM votes_a " +
                     "   WHERE user_id = :userId) " +
@@ -32,7 +30,7 @@ public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
     List<Questions> findNotVotedQuestions(
             @Param("userId") int userId, @Param("randomOrder") int lastOrder, @Param("limit") int count);
 
-    Page<Questions> findAllByUserIdOrderByDecisionAscIdDesc(Integer userId, Pageable pageable);
+    Page<Questions> findAllByUserIdAndReportStateOrderByDecisionAscIdDesc(Integer userId, Integer reportState, Pageable pageable);
 
     @Query(value = "SELECT * " +
                     "FROM questions q " +
@@ -43,6 +41,7 @@ public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
                     "    (SELECT question_id, vote_time FROM votes_b " +
                     "    WHERE user_id = 2)) v " +
                     "    ON q.id = v.question_id " +
+                    "WHERE report_state = 0 " +
                     "ORDER BY v.vote_time DESC ",
             nativeQuery = true
     )
