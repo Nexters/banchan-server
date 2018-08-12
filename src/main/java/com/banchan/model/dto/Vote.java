@@ -16,4 +16,7 @@ public class Vote {
 
     @NotNull
     private AnswerType answer;
+
+    @NotNull
+    private boolean random;
 }

@@ -17,7 +17,7 @@ public class QuestionCard {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer id;
 
-    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer order;
 
     @NotNull
