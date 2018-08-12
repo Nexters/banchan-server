@@ -36,10 +36,10 @@ public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
                     "FROM questions q " +
                     "JOIN ( " +
                     "    (SELECT question_id, vote_time FROM votes_a " +
-                    "    WHERE user_id = 2) " +
+                    "    WHERE user_id = :userId) " +
                     "    UNION ALL " +
                     "    (SELECT question_id, vote_time FROM votes_b " +
-                    "    WHERE user_id = 2)) v " +
+                    "    WHERE user_id = :userId)) v " +
                     "    ON q.id = v.question_id " +
                     "WHERE report_state = 0 " +
                     "ORDER BY v.vote_time DESC ",

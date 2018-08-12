@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -73,8 +70,12 @@ public class QuestionsService {
     }
 
     public List<QuestionCard> findNotVotedQuestionCard(int userId, int lastOrder, int count){
-        return findQuestionCardByQuestions(
+
+        List<QuestionCard> result = findQuestionCardByQuestions(
                 questionsRepository.findNotVotedQuestions(userId, lastOrder, count));
+        Collections.shuffle(result);
+
+        return result;
     }
 
     private List<QuestionCard> findQuestionCardByQuestions(List<Questions> questions){
