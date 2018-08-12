@@ -24,4 +24,6 @@ public interface VotesARepository extends JpaRepository<VotesA, Integer> {
             nativeQuery = true
     )
     CompletableFuture<Number> countAllByQuestionId(@Param("questionId") int questionId);
+
+    List<VotesA> findAllByQuestionId(int questionId);
 }
