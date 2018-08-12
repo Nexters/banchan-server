@@ -1,5 +1,6 @@
 buildscript {
     ext {
+        kotlinVersion = '1.2.30'
         springBootVersion = '2.0.3.RELEASE'
     }
     repositories {
@@ -9,11 +10,18 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "io.spring.gradle:dependency-management-plugin:1.0.4.RELEASE"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}"
     }
 }
 
 apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-spring'
+apply plugin: 'kotlin-jpa'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -39,6 +47,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2')
     compile("org.mariadb.jdbc:mariadb-java-client")
+
     runtime('com.h2database:h2')
     compileOnly('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
@@ -52,10 +61,18 @@ dependencies {
     compile 'software.amazon.awssdk:s3'
     compile 'commons-fileupload:commons-fileupload:1.3.3'
     compile 'commons-io:commons-io:2.6'
+    compile 'io.reactivex.rxjava2:rxjava:2.2.0'
+    compile 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.5.0'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.5.0'
 
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.8.0")
     compile 'org.apache.tika:tika-core:1.14'
     implementation 'one.util:streamex:0.6.7'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+
+//    implementation 'io.github.microutils:kotlin-logging:1.5.4'
 }
