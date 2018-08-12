@@ -2,6 +2,7 @@ package com.banchan.model.vo;
 
 import com.banchan.model.domain.question.DetailType;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -34,4 +35,31 @@ public class QuestionCard {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long comment;
+
+
+    // Swagger 를 위한 getter
+    @ApiModelProperty(hidden = true)
+    public Integer getId() {
+        return id;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public Integer getOrder() {
+        return order;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public LocalDateTime getWriteTime() {
+        return writeTime;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public VoteCount getVote() {
+        return vote;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public Long getComment() {
+        return comment;
+    }
 }
