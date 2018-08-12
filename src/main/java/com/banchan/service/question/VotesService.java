@@ -5,6 +5,7 @@ import com.banchan.model.dto.VoteCountData;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.entity.VotesA;
 import com.banchan.model.entity.VotesB;
+import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.repository.VotesARepository;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -35,6 +37,9 @@ public class VotesService {
     private static final int VOTE_COUNT_REWARD = 10;
     private static final int QUESTION_TIME_REWARD = 10;
 
+    private static final int RANDOM_REWARD_MIN = 10;
+    private static final int RANDOM_REWARD_MAX = 90 - RANDOM_REWARD_MIN;
+
     public int add(Vote vote){
         CompletableFuture<Integer> reward = saveReward(vote);
         saveVote(vote);
@@ -51,10 +56,13 @@ public class VotesService {
 
         return CompletableFuture.supplyAsync(
                 () -> questionsRepository.findById(vote.getQuestionId())
-                        .orElseThrow(() -> new IllegalStateException("해당 질문이 없습니다.")))
+                        .orElseThrow(() -> new QuestionException("해당 질문이 없습니다.")))
                 .thenCombine(votesARepository.countAllByQuestionId(vote.getQuestionId()),
                         (question, voteCount) ->
-                                this.rewardByQuestion(question) + this.rewardByVoteCount(voteCount.longValue()));
+                                this.rewardByQuestion(question)
+                                        + this.rewardByVoteCount(voteCount.longValue())
+                                        + (vote.isRandom() ?
+                                        new Random().nextInt(RANDOM_REWARD_MAX) + RANDOM_REWARD_MIN : 0));
     }
 
     private int rewardByQuestion(Questions question){
