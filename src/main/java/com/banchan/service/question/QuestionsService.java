@@ -43,6 +43,7 @@ public class QuestionsService {
                         .userId(questionCard.getUserId())
                         .randomOrder(new Random().nextInt(Integer.MAX_VALUE))
                         .writeTime(LocalDateTime.now())
+                        .reportState(0)
                         .build());
 
         questionDetailsService.add(
@@ -67,7 +68,7 @@ public class QuestionsService {
 
     public List<QuestionCard> findUserMadeQuestionCard(int userId, int page, int count){
         return this.findQuestionCardByQuestions(
-                questionsRepository.findAllByUserIdOrderByDecisionAscIdDesc(userId, PageRequest.of(page, count))
+                questionsRepository.findAllByUserIdAndReportStateOrderByDecisionAscIdDesc(userId, 0,  PageRequest.of(page, count))
                         .getContent());
     }
 
