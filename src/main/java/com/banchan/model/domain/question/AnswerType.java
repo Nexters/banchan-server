@@ -27,7 +27,7 @@ public enum AnswerType {
     public static AnswerType valueOf(Boolean value){
         if(value == null) return UNDECIDED;
         return Optional.ofNullable(map.get(value))
-                .orElseThrow(IllegalArgumentException::new);
+                .orElse(null);
     }
 
 }
