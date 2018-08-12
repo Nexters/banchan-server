@@ -13,4 +13,6 @@ public interface VotesBRepository extends JpaRepository<VotesB, Integer> {
 
     @Query("SELECT NEW com.banchan.model.dto.VoteCountData(v.questionId, COUNT(v)) FROM VotesB v WHERE v.questionId IN (:questionIds) GROUP BY v.questionId")
     CompletableFuture<List<VoteCountData>> countByQuestionIdInGroupByQuestion(@Param("questionIds") List<Integer> questionIds);
+
+    List<VotesB> findAllByQuestionId(int questionId);
 }
