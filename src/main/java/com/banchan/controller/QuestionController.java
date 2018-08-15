@@ -2,6 +2,7 @@ package com.banchan.controller;
 
 import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.reviews.ReportRequestDto;
+import com.banchan.model.entity.Questions;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.service.question.QuestionsService;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("api")
@@ -32,7 +34,7 @@ public class QuestionController {
                     "응답: 영향 받은 사람 수 (현재는 -1이 리턴)"
     )
     @RequestMapping(value = "vote", method = RequestMethod.POST)
-    public CommonResponse<?> addVote(@RequestBody Vote vote){
+    public CommonResponse<Integer> addVote(@RequestBody Vote vote){
         return CommonResponse.success(votesService.add(vote));
     }
 
@@ -46,7 +48,7 @@ public class QuestionController {
                     " / userId - 어떤 유저가 투표했는지"
     )
     @RequestMapping(value = "questionCard", method = RequestMethod.POST)
-    public CommonResponse<?> addQuestions(@Valid @RequestBody QuestionCard questionCard, BindingResult bindingResult){
+    public CommonResponse<Questions> addQuestions(@Valid @RequestBody QuestionCard questionCard, BindingResult bindingResult){
         if(bindingResult.hasErrors()) return CommonResponse.FAIL;
 
         return CommonResponse.success(questionsService.add(questionCard));
@@ -58,13 +60,13 @@ public class QuestionController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "사용자 ID", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "lastOrder", value = "마지막 조회한 질문의 order", required = true, paramType = "path", defaultValue = "-1"),
+            @ApiImplicitParam(name = "lastOrder", value = "마지막 조회한 질문의 order", required = true, paramType = "path", defaultValue = "0"),
             @ApiImplicitParam(name = "count", value = "조회할 질문 수", required = true, paramType = "path")
     })
     @RequestMapping(value = "user/{userId}/notVotedQuestions/{lastOrder}/{count}", method = RequestMethod.GET)
-    public CommonResponse<?> findNotVotedQuestions(
+    public CommonResponse<List<?>> findNotVotedQuestions(
             @PathVariable("userId") int userId, @PathVariable("lastOrder") int lastOrder, @PathVariable("count") int count) {
-        return CommonResponse.success(questionsService.findNotVotedQuestionCard(userId, lastOrder, count));
+        return CommonResponse.success(questionsService.findNotVotedQuestionCard(userId, lastOrder - 1, count));
     }
 
     @ApiOperation(value = "사용자가 만든 질문 조회",
@@ -77,7 +79,7 @@ public class QuestionController {
             @ApiImplicitParam(name = "count", value = "조회할 질문 수", required = true, paramType = "path")
     })
     @RequestMapping(value = "user/{userId}/userMadeQuestions/{page}/{count}", method = RequestMethod.GET)
-    public CommonResponse<?> userMadeQuestions(
+    public CommonResponse<List<?>> userMadeQuestions(
             @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
         return CommonResponse.success(questionsService.findUserMadeQuestionCard(userId, page, count));
     }
@@ -92,7 +94,7 @@ public class QuestionController {
             @ApiImplicitParam(name = "count", value = "조회할 질문 수", required = true, paramType = "path")
     })
     @RequestMapping(value = "user/{userId}/votedQuestions/{page}/{count}", method = RequestMethod.GET)
-    public CommonResponse<?> findVotedQuestions(
+    public CommonResponse<List<?>> findVotedQuestions(
             @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
         return CommonResponse.success(questionsService.findVotedQuestionCard(userId, page, count));
     }
