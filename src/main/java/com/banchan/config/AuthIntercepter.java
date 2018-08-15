@@ -3,6 +3,7 @@ package com.banchan.config;
 import com.banchan.config.annotation.BanchanAuth;
 import com.banchan.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 
@@ -11,7 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-public class AuthInterceptor extends WebContentInterceptor {
+@Component
+public class AuthIntercepter extends WebContentInterceptor {
 
     @Autowired private UserService userService;
 

@@ -66,8 +66,7 @@ dependencies {
 
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.5.0'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.5.0'
-
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.8.0")
+    
     compile 'org.apache.tika:tika-core:1.14'
     implementation 'one.util:streamex:0.6.7'
     compile 'com.google.guava:guava:26.0-jre' // guava
