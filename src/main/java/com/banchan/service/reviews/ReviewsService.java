@@ -1,5 +1,6 @@
 package com.banchan.service.reviews;
 
+import com.banchan.model.dto.ReviewCountData;
 import com.banchan.model.dto.reviews.ReportRequestDto;
 import com.banchan.model.dto.reviews.ReviewsResponseDto;
 import com.banchan.model.dto.reviews.ReviewsSaveRequestDto;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -66,5 +69,13 @@ public class ReviewsService {
 
     public boolean isOverlap(ReportRequestDto dto) {
         return reportsRepository.countByUserIdAndReviewId(dto.getUserId(), dto.getReviewId()) >= 1;
+    }
+
+    public CompletableFuture<Map<Integer, Long>> findReviewCount(List<Integer> questionIds){
+        return reviewsRepository.countByQuestionIdInGroupByQuestion(questionIds)
+                .thenApply(reviewCountData -> reviewCountData.stream()
+                        .collect(Collectors.toMap(
+                                ReviewCountData::getQuestionId,
+                                ReviewCountData::getReviewCount)));
     }
 }
