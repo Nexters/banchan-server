@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class QuestionReportRequestDto {
 
-    private Integer userId;
+    private Long userId;
     private Integer questionId;
 
     public Reports toQuestionReportEntity() {

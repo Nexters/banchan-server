@@ -12,7 +12,7 @@ public class ReviewsResponseDto {
 
     private Integer id;
     private Integer questionId;
-    private Integer uesrId;
+    private Long uesrId;
     private String content;
     private Integer reportState;
     private String createdAt;

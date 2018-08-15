@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class ReviewReportRequestDto {
 
-    private Integer userId;
+    private Long userId;
     private Integer reviewId;
 
     public Reports toReviewReportEntity() {
