@@ -18,7 +18,7 @@ public class Reports extends BaseTimeEntity {
     private Integer id;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "question_id")
     private Integer questionId;
@@ -27,7 +27,7 @@ public class Reports extends BaseTimeEntity {
     private Integer reviewId;
 
     @Builder
-    public Reports(Integer userId, Integer questionId, Integer reviewId) {
+    public Reports(Long userId, Integer questionId, Integer reviewId) {
         this.userId = userId;
         this.questionId = questionId;
         this.reviewId = reviewId;

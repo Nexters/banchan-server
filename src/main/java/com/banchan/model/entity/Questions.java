@@ -19,7 +19,7 @@ public class Questions {
     private Integer id;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "random_order")
     private Integer randomOrder;
