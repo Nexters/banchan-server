@@ -9,4 +9,6 @@ interface UserRepository : JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE deviceKey = :deviceKey AND useYn ='Y'")
     fun findByDeviceKey(@Param("deviceKey") deviceKey: String): User?
+
+    fun findByIdIn(ids: List<Long>): List<User>?
 }

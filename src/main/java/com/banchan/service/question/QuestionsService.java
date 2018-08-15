@@ -3,12 +3,16 @@ package com.banchan.service.question;
 import com.banchan.model.domain.question.DetailType;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
 import com.banchan.model.dto.reviews.ReviewReportRequestDto;
+import com.banchan.model.dto.ReviewCountData;
 import com.banchan.model.entity.Questions;
+import com.banchan.model.entity.User;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.repository.ReportsRepository;
+import com.banchan.repository.UserRepository;
+import com.banchan.service.reviews.ReviewsService;
 import one.util.streamex.EntryStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +34,9 @@ public class QuestionsService {
     @Autowired private ImageUploader imageUploader;
     @Autowired private QuestionDetailsService questionDetailsService;
     @Autowired private VotesService votesService;
+
+    @Autowired private ReviewsService reviewsService;
+    @Autowired private UserRepository userRepository;
 
     @Transactional
     public Questions add(QuestionCard questionCard){
@@ -61,7 +68,7 @@ public class QuestionsService {
     public List<QuestionCard> findVotedQuestionCard(int userId, int page, int count){
         return this.findQuestionCardByQuestions(
                 questionsRepository.findVotedQuestions(userId, PageRequest.of(page, count))
-                .getContent());
+                        .getContent());
     }
 
     public List<QuestionCard> findUserMadeQuestionCard(int userId, int page, int count){
@@ -83,8 +90,16 @@ public class QuestionsService {
         if(questions == null || questions.size() == 0) throw new QuestionException("QuestionNotFound");
 
         List<Integer> questionIds = questions.stream().map(Questions::getId).collect(Collectors.toList());
+        List<Long> userIds = questions.stream().map(Questions::getUserId).collect(Collectors.toList());
 
         try {
+
+            CompletableFuture<Map<Long, String>> cfUsernameMap = CompletableFuture
+                    .supplyAsync(() -> userRepository.findByIdIn(userIds).stream()
+                            .collect(Collectors.toMap(
+                                    User::getId,
+                                    user -> user.getUsername().getPrefix() + " " + user.getUsername().getPostfix()
+                            )));
 
             CompletableFuture<Map<Integer, Map<DetailType, String>>> cfDetailMap =
                     questionDetailsService.findQuestionDetails(questionIds);
@@ -92,9 +107,17 @@ public class QuestionsService {
             CompletableFuture<Map<Integer, VoteCount>> cfVoteCountMap =
                     votesService.findVoteCount(questionIds);
 
-            return CompletableFuture.allOf(cfDetailMap, cfVoteCountMap)
+            CompletableFuture<Map<Integer, Long>> cfReviewCountMap =
+                    reviewsService.findReviewCount(questionIds);
+
+            return CompletableFuture.allOf(cfUsernameMap, cfDetailMap, cfVoteCountMap, cfReviewCountMap)
                     .thenApply(ignoredVoid ->
-                            this.toQuestionCards(questions, cfDetailMap.join(), cfVoteCountMap.join()))
+                            this.toQuestionCards(
+                                    questions,
+                                    cfUsernameMap.join(),
+                                    cfDetailMap.join(),
+                                    cfVoteCountMap.join(),
+                                    cfReviewCountMap.join()))
                     .get();
 
         } catch (InterruptedException e) { throw new RuntimeException(e);
@@ -103,16 +126,20 @@ public class QuestionsService {
 
     private List<QuestionCard> toQuestionCards(
             List<Questions> questions,
+            Map<Long, String> usernameMap,
             Map<Integer, Map<DetailType, String>> detailMap,
-            Map<Integer, VoteCount> voteCountMap){
+            Map<Integer, VoteCount> voteCountMap,
+            Map<Integer, Long> reviewCountMap){
 
         return questions.stream()
                 .map(question -> QuestionCard.builder()
                         .id(question.getId())
+                        .username(usernameMap.get(question.getUserId()))
                         .order(question.getRandomOrder())
                         .userId(question.getUserId())
                         .detail(detailMap.get(question.getId()))
                         .vote(voteCountMap.get(question.getId()))
+                        .review(Optional.ofNullable(reviewCountMap.get(question.getId())).orElse(0L))
                         .writeTime(question.getWriteTime())
                         .build())
                 .collect(Collectors.toList());
