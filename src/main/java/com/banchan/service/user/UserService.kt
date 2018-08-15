@@ -7,7 +7,6 @@ import com.banchan.model.entity.UserAuthInfo
 import com.banchan.repository.NameWordsRepository
 import com.banchan.repository.UserAuthInfoRepository
 import com.banchan.repository.UserRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.bind.Bindable.listOf
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -30,8 +29,4 @@ open class UserService (
     fun auth(userId:Long, tokkenKey:String): Boolean {
         return userAuthInfoRepository.countByUserIdAndTokenKey(userId, tokkenKey) > 0
     }
-
-//    fun findNameWord() : List<NameWords> {
-//        listOf(nameWordsRepository.findByType("R") , nameWordsRepository.findByType("O"));
-//    }
 }
