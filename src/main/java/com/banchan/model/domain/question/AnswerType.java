@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public enum AnswerType {
 
-    UNDECIDED(null), A(false), B(true);
+    A(false), B(true), UNDECIDED(null);
 
     private static final Map<Boolean, AnswerType> map = Maps.newHashMap();
 

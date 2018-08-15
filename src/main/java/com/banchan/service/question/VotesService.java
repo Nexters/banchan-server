@@ -1,22 +1,26 @@
 package com.banchan.service.question;
 
+import com.banchan.model.domain.question.AnswerType;
 import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.VoteCountData;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.entity.VotesA;
 import com.banchan.model.entity.VotesB;
+import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.repository.VotesARepository;
 import com.banchan.repository.VotesBRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -35,8 +39,23 @@ public class VotesService {
     private static final int VOTE_COUNT_REWARD = 10;
     private static final int QUESTION_TIME_REWARD = 10;
 
+    private static final int RANDOM_REWARD_MIN = 10;
+    private static final int RANDOM_REWARD_MAX = 90 - RANDOM_REWARD_MIN;
+
+    private static final int SAME_REWARD = 10;
+
+    @Transactional
     public int add(Vote vote){
-        CompletableFuture<Integer> reward = saveReward(vote);
+        Questions question = questionsRepository.findById(vote.getQuestionId())
+                .orElseThrow(() -> new QuestionException("해당 질문이 없습니다."));
+
+        if(question.getUserId().equals(vote.getUserId())) {
+            question.setDecision(vote.getAnswer());
+            questionsRepository.save(question);
+            return addReward(vote);
+        }
+
+        CompletableFuture<Integer> reward = saveReward(vote, question);
         saveVote(vote);
 
         try {
@@ -47,14 +66,22 @@ public class VotesService {
         } catch (ExecutionException e) { throw new RuntimeException(e); }
     }
 
-    private CompletableFuture<Integer> saveReward(Vote vote){
+    private int addReward(Vote vote){
+        if(AnswerType.A.equals(vote.getAnswer()))
+            votesARepository.findAllByQuestionId(vote.getQuestionId()).stream();
+        else
+            votesBRepository.findAllByQuestionId(vote.getQuestionId()).stream();
 
-        return CompletableFuture.supplyAsync(
-                () -> questionsRepository.findById(vote.getQuestionId())
-                        .orElseThrow(() -> new IllegalStateException("해당 질문이 없습니다.")))
-                .thenCombine(votesARepository.countAllByQuestionId(vote.getQuestionId()),
-                        (question, voteCount) ->
-                                this.rewardByQuestion(question) + this.rewardByVoteCount(voteCount.longValue()));
+        return -1; // 적용된 사람들 숫자?
+    }
+
+    private CompletableFuture<Integer> saveReward(Vote vote, Questions question) {
+
+        return votesARepository.countAllByQuestionId(vote.getQuestionId())
+                .thenApply((voteCount) -> this.rewardByQuestion(question)
+                        + this.rewardByVoteCount(voteCount.longValue())
+                        + (vote.isRandom() ?
+                        new Random().nextInt(RANDOM_REWARD_MAX) + RANDOM_REWARD_MIN : 0));
     }
 
     private int rewardByQuestion(Questions question){
