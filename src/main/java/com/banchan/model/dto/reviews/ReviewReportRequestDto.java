@@ -6,23 +6,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReportRequestDto {
+public class ReviewReportRequestDto {
 
-    private Integer userId;
+    private Long userId;
     private Integer reviewId;
-    private Integer questionId;
 
     public Reports toReviewReportEntity() {
         return Reports.builder()
                 .userId(userId)
                 .reviewId(reviewId)
-                .build();
-    }
-
-    public Reports toQuestionReportEntity() {
-        return Reports.builder()
-                .userId(userId)
-                .questionId(questionId)
                 .build();
     }
 

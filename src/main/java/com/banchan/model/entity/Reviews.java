@@ -21,7 +21,7 @@ public class Reviews extends BaseTimeEntity {
     private Integer questionId;
 
     @Column(name = "user_id", nullable = false)
-    private Integer uesrId;
+    private Long uesrId;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
@@ -33,7 +33,7 @@ public class Reviews extends BaseTimeEntity {
     private Integer deleteState;
 
     @Builder
-    public Reviews(Integer questionId, Integer uesrId, String content,
+    public Reviews(Integer questionId, Long uesrId, String content,
                    Integer reportState, Integer deleteState) {
         this.questionId = questionId;
         this.uesrId = uesrId;

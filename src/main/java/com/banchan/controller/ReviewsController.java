@@ -1,6 +1,8 @@
 package com.banchan.controller;
 
-import com.banchan.model.dto.reviews.ReportRequestDto;
+import com.banchan.config.annotation.BanchanAuth;
+import com.banchan.model.dto.reviews.ReviewReportRequestDto;
+import com.banchan.model.dto.reviews.ReviewsResponseDto;
 import com.banchan.model.dto.reviews.ReviewsSaveRequestDto;
 import com.banchan.model.dto.reviews.ReviewsUpdateRequestDto;
 import com.banchan.model.response.CommonResponse;
@@ -10,6 +12,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -31,9 +35,10 @@ public class ReviewsController {
             @ApiImplicitParam(name = "lastReviewId", value = "클라이언트가 마지막으로 전달받은 댓글의 id",
                     required = true, dataType = "int", paramType = "path", defaultValue = "")
     })
+    @BanchanAuth
     @GetMapping("question/{questionId}/last-review/{lastReviewId}")
-    public CommonResponse<?> findReviews(@PathVariable("questionId") Integer questionId,
-                                                @PathVariable("lastReviewId") Integer lastReviewId) {
+    public CommonResponse<List<ReviewsResponseDto>> findReviews(@PathVariable("questionId") Integer questionId,
+                                                                @PathVariable("lastReviewId") Integer lastReviewId) {
         return CommonResponse.success(reviewsService.findReviews(questionId, lastReviewId));
     }
 
@@ -42,8 +47,9 @@ public class ReviewsController {
      * @param dto | 댓글 작성용 RequestDto (속성 : questionId, userId, content)
      */
     @ApiOperation(value = "댓글 작성", notes = "성공 시 작성한 댓글의 id값 반환")
+    @BanchanAuth
     @PostMapping("")
-    public CommonResponse<?> saveReview (@RequestBody ReviewsSaveRequestDto dto) {
+    public CommonResponse<Integer> saveReview (@RequestBody ReviewsSaveRequestDto dto) {
         return CommonResponse.success(reviewsService.save(dto));
     }
 
@@ -52,8 +58,9 @@ public class ReviewsController {
      * @param dto | 댓글 수정용 RequestDto (속성 : reviewId, content)
      */
     @ApiOperation(value = "댓글 수정", notes = "성공 시 수정한 댓글의 id값 반환")
+    @BanchanAuth
     @PutMapping("")
-    public CommonResponse<?> updateReview (@RequestBody ReviewsUpdateRequestDto dto) {
+    public CommonResponse<Integer> updateReview (@RequestBody ReviewsUpdateRequestDto dto) {
         return CommonResponse.success(reviewsService.update(dto));
     }
 
@@ -64,8 +71,9 @@ public class ReviewsController {
     @ApiOperation(value = "댓글 삭제", notes = "성공 시 삭제한 댓글의 id값 반환")
     @ApiImplicitParam(name = "deleteReviewId", value = "삭제할 댓글 id",
             required = true, dataType = "int", paramType = "path", defaultValue = "")
+    @BanchanAuth
     @DeleteMapping("{deleteReviewId}")
-    public CommonResponse<?> deleteReview (@PathVariable("deleteReviewId") int deleteReviewId) {
+    public CommonResponse<Integer> deleteReview (@PathVariable("deleteReviewId") int deleteReviewId) {
         return CommonResponse.success(reviewsService.delete(deleteReviewId));
     }
 
@@ -74,8 +82,10 @@ public class ReviewsController {
      * @param dto | 댓글 신고용 RequestDto (속성 : userId, reviewId)
      */
     @PostMapping("report")
-    @ApiOperation(value = "댓글 신고", notes = "동일한 유저가 동일한 댓글을 신고한 경우 fail | reason : isOverlap")
-    public CommonResponse<?> reportReview (@RequestBody ReportRequestDto dto) {
+    @BanchanAuth
+    @ApiOperation(value = "댓글 신고", notes = "성공 시 신고 고유 id 반환 // " +
+            "동일한 유저가 동일한 댓글을 신고한 경우 fail | reason : isOverlap")
+    public CommonResponse reportReview (@RequestBody ReviewReportRequestDto dto) {
         if (reviewsService.isOverlap(dto)) {
             return CommonResponse.fail("isOverlap");
         }
