@@ -23,7 +23,7 @@ public interface VotesARepository extends JpaRepository<VotesA, Integer> {
                     "WHERE question_id = :questionId) v",
             nativeQuery = true
     )
-    CompletableFuture<Number> countAllByQuestionId(@Param("questionId") int questionId);
+    Number countAllByQuestionId(@Param("questionId") int questionId);
 
     List<VotesA> findAllByQuestionId(int questionId);
 }

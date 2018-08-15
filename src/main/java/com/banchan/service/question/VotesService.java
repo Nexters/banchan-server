@@ -1,14 +1,17 @@
 package com.banchan.service.question;
 
 import com.banchan.model.domain.question.AnswerType;
+import com.banchan.model.domain.question.RewardType;
 import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.VoteCountData;
 import com.banchan.model.entity.Questions;
+import com.banchan.model.entity.RewardHistory;
 import com.banchan.model.entity.VotesA;
 import com.banchan.model.entity.VotesB;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionsRepository;
+import com.banchan.repository.RewardHistoryRepository;
 import com.banchan.repository.VotesARepository;
 import com.banchan.repository.VotesBRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class VotesService {
@@ -32,6 +33,7 @@ public class VotesService {
     @Autowired VotesBRepository votesBRepository;
 
     @Autowired QuestionsRepository questionsRepository;
+    @Autowired RewardHistoryRepository rewardHistoryRepository;
 
     private static final long VOTE_COUNT_CONSTRAINT = 5;
     private static final long QUESTION_TIME_CONSTRAINT = 30;
@@ -52,21 +54,17 @@ public class VotesService {
         if(question.getUserId().equals(vote.getUserId())) {
             question.setDecision(vote.getAnswer());
             questionsRepository.save(question);
-            return addReward(vote);
+            return distributeReward(vote);
         }
 
-        CompletableFuture<Integer> reward = saveReward(vote, question);
+        Stream.of(reward(vote, question))
+                .peek(rewardHistoryRepository::saveAll)
+                .map()
+
         saveVote(vote);
-
-        try {
-
-            return reward.get();
-
-        } catch (InterruptedException e) { throw new RuntimeException(e);
-        } catch (ExecutionException e) { throw new RuntimeException(e); }
     }
 
-    private int addReward(Vote vote){
+    private int distributeReward(Vote vote){
         if(AnswerType.A.equals(vote.getAnswer()))
             votesARepository.findAllByQuestionId(vote.getQuestionId()).stream();
         else
@@ -75,33 +73,43 @@ public class VotesService {
         return -1; // 적용된 사람들 숫자?
     }
 
-    private CompletableFuture<Integer> saveReward(Vote vote, Questions question) {
+    private List<RewardHistory> reward(Vote vote, Questions question) {
+        List<RewardHistory> rewardHistories = new ArrayList<>();
 
-        return votesARepository.countAllByQuestionId(vote.getQuestionId())
-                .thenApply((voteCount) -> this.rewardByQuestion(question)
-                        + this.rewardByVoteCount(voteCount.longValue())
-                        + (vote.isRandom() ?
-                        new Random().nextInt(RANDOM_REWARD_MAX) + RANDOM_REWARD_MIN : 0));
+        rewardHistories.add(this.rewardInNew(vote, question));
+        rewardHistories.add(this.rewardInFirst(vote, question));
+        rewardHistories.add(this.rewardInRandom(vote));
+
+        return rewardHistories;
     }
 
-    private int rewardByQuestion(Questions question){
-        int result = 0;
-
-        if(question.getWriteTime()
+    private RewardHistory rewardInNew(Vote vote, Questions question){
+        return question.getWriteTime()
                 .plus(Duration.ofMinutes(this.QUESTION_TIME_CONSTRAINT))
-                .isBefore(LocalDateTime.now()))
-            result += this.QUESTION_TIME_REWARD;
-
-        return result;
+                .isBefore(LocalDateTime.now()) ?
+                this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM, new Random().nextDouble()) :
+                null;
     }
 
-    private int rewardByVoteCount(Long count){
-        int result = 0;
+    private RewardHistory rewardInFirst(Vote vote, Questions question){
+        return votesARepository.countAllByQuestionId(question.getId()).longValue() < this.VOTE_COUNT_CONSTRAINT ?
+                this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM, new Random().nextDouble()) :
+                null;
+    }
 
-        if(count < this.VOTE_COUNT_CONSTRAINT)
-            result += this.VOTE_COUNT_REWARD;
+    private RewardHistory rewardInRandom(Vote vote){
+        return vote.isRandom() ?
+                this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM, new Random().nextDouble()) :
+                null;
+    }
 
-        return result;
+    private RewardHistory makeRewardHistory(Long userId, RewardType type, Double reward){
+        return RewardHistory.builder()
+                .userId(userId)
+                .type(type)
+                .reward(reward)
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 
     private Vote saveVote(Vote vote){
