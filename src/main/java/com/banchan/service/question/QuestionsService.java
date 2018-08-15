@@ -1,7 +1,8 @@
 package com.banchan.service.question;
 
 import com.banchan.model.domain.question.DetailType;
-import com.banchan.model.dto.reviews.ReportRequestDto;
+import com.banchan.model.dto.questions.QuestionReportRequestDto;
+import com.banchan.model.dto.reviews.ReviewReportRequestDto;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.QuestionCard;
@@ -122,7 +123,7 @@ public class QuestionsService {
      */
     final static int REPORT_MAX_SIZE = 10;
     @Transactional
-    public Integer saveReport(ReportRequestDto dto) {
+    public Integer saveReport(QuestionReportRequestDto dto) {
         Integer reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
         if (reportsRepository.countByQuestionId(dto.getQuestionId()) >= REPORT_MAX_SIZE) {
             Questions question = questionsRepository.findById(dto.getQuestionId()).get();
@@ -135,7 +136,7 @@ public class QuestionsService {
     /**
      * 동일한 사용자가 신고한것인지 중복 체크
      */
-    public boolean isOverlap(ReportRequestDto dto) {
+    public boolean isOverlap(QuestionReportRequestDto dto) {
         return reportsRepository.countByUserIdAndQuestionId(dto.getUserId(), dto.getQuestionId()) >= 1;
     }
 }

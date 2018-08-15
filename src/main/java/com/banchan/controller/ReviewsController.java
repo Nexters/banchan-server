@@ -1,6 +1,6 @@
 package com.banchan.controller;
 
-import com.banchan.model.dto.reviews.ReportRequestDto;
+import com.banchan.model.dto.reviews.ReviewReportRequestDto;
 import com.banchan.model.dto.reviews.ReviewsResponseDto;
 import com.banchan.model.dto.reviews.ReviewsSaveRequestDto;
 import com.banchan.model.dto.reviews.ReviewsUpdateRequestDto;
@@ -79,7 +79,7 @@ public class ReviewsController {
     @PostMapping("report")
     @ApiOperation(value = "댓글 신고", notes = "성공 시 신고 고유 id 반환 // " +
             "동일한 유저가 동일한 댓글을 신고한 경우 fail | reason : isOverlap")
-    public CommonResponse reportReview (@RequestBody ReportRequestDto dto) {
+    public CommonResponse reportReview (@RequestBody ReviewReportRequestDto dto) {
         if (reviewsService.isOverlap(dto)) {
             return CommonResponse.fail("isOverlap");
         }

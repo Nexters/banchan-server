@@ -1,7 +1,8 @@
 package com.banchan.controller;
 
 import com.banchan.model.dto.Vote;
-import com.banchan.model.dto.reviews.ReportRequestDto;
+import com.banchan.model.dto.questions.QuestionReportRequestDto;
+import com.banchan.model.dto.reviews.ReviewReportRequestDto;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
@@ -106,7 +107,7 @@ public class QuestionController {
     @PostMapping("question/report")
     @ApiOperation(value = "질문 신고", notes = "성공 시 신고 고유 id 반환 // " +
             "동일한 유저가 동일한 질문을 신고한 경우 fail | reason : isOverlap")
-    public CommonResponse reportQuestion (@RequestBody ReportRequestDto dto) {
+    public CommonResponse reportQuestion (@RequestBody QuestionReportRequestDto dto) {
         if (questionsService.isOverlap(dto)) {
             return CommonResponse.fail("isOverlap");
         }

@@ -1,6 +1,6 @@
 package com.banchan.service.reviews;
 
-import com.banchan.model.dto.reviews.ReportRequestDto;
+import com.banchan.model.dto.reviews.ReviewReportRequestDto;
 import com.banchan.model.dto.reviews.ReviewsResponseDto;
 import com.banchan.model.dto.reviews.ReviewsSaveRequestDto;
 import com.banchan.model.dto.reviews.ReviewsUpdateRequestDto;
@@ -54,7 +54,7 @@ public class ReviewsService {
      */
     final static int REPORT_MAX_SIZE = 10;
     @Transactional
-    public Integer saveReport(ReportRequestDto dto) {
+    public Integer saveReport(ReviewReportRequestDto dto) {
         Integer reportId = reportsRepository.save(dto.toReviewReportEntity()).getId();
         if (reportsRepository.countByReviewId(dto.getReviewId()) >= REPORT_MAX_SIZE) {
             Reviews review = reviewsRepository.findById(dto.getReviewId()).get();
@@ -64,7 +64,7 @@ public class ReviewsService {
         return reportId;
     }
 
-    public boolean isOverlap(ReportRequestDto dto) {
+    public boolean isOverlap(ReviewReportRequestDto dto) {
         return reportsRepository.countByUserIdAndReviewId(dto.getUserId(), dto.getReviewId()) >= 1;
     }
 }
