@@ -7,7 +7,7 @@ import com.banchan.service.user.NameService
 import com.banchan.service.user.UserService
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("/users")
+@RequestMapping("api/users")
 @RestController
 open class UserController (
         val userService : UserService,
