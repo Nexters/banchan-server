@@ -21,8 +21,11 @@ public class QuestionCard {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer order;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String username;
+
     @NotNull
-    private Integer userId;
+    private Long userId;
 
     @Size(min = 3, max = 6) // enum valid 도 찾아보거나 만들어보자
     private Map<DetailType, String> detail;
@@ -34,13 +37,18 @@ public class QuestionCard {
     private VoteCount vote;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long comment;
+    private Long review;
 
 
     // Swagger 를 위한 getter
     @ApiModelProperty(hidden = true)
     public Integer getId() {
         return id;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public String getUsername() {
+        return username;
     }
 
     @ApiModelProperty(hidden = true)
@@ -59,7 +67,7 @@ public class QuestionCard {
     }
 
     @ApiModelProperty(hidden = true)
-    public Long getComment() {
-        return comment;
+    public Long getreview() {
+        return review;
     }
 }
