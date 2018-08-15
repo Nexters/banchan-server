@@ -22,5 +22,7 @@ open class UserService {
         return user
     }
 
-
+    fun auth(userId:Long, tokkenKey:String): Boolean {
+        return userAuthInfoRepository.countByUserIdAndTokenKey(userId, tokkenKey) > 0;
+    }
 }
