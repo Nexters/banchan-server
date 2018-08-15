@@ -8,12 +8,20 @@ import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/user")
 @RestController
-open class UserController {
-    @Autowired lateinit var userService : UserService
+open class UserController (
+        val userService : UserService
+) {
 
     @ResponseBody
     @PostMapping
     fun save (@RequestBody user: User): CommonResponse<User>? {
-        return CommonResponse.success(user)
+        return CommonResponse.success(userService.save(user))
     }
+
+    @ResponseBody
+    @GetMapping("/names")
+    fun findNameWords() {
+
+    }
+
 }
