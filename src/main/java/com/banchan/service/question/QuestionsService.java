@@ -123,13 +123,13 @@ public class QuestionsService {
     final static int REPORT_MAX_SIZE = 10;
     @Transactional
     public Integer saveReport(ReportRequestDto dto) {
-        Integer questionId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
+        Integer reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
         if (reportsRepository.countByQuestionId(dto.getQuestionId()) >= REPORT_MAX_SIZE) {
             Questions question = questionsRepository.findById(dto.getQuestionId()).get();
             question.report();
             questionsRepository.save(question);
         }
-        return questionId;
+        return reportId;
     }
 
     /**
