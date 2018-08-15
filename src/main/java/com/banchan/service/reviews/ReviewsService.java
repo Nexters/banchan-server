@@ -24,6 +24,8 @@ public class ReviewsService {
     final static int REVIEWS_SIZE = 10;
     @Transactional(readOnly = true)
     public List<ReviewsResponseDto> findReviews(Integer questionId, Integer lastReviewId) {
+        //lastReviewId == 0 => 질문카드 댓글요청 첫 페이지일 경우 lastReviewId에 Integer.MAX_VALUE 대입
+        lastReviewId = (lastReviewId == 0) ? Integer.MAX_VALUE : lastReviewId;
         return reviewsRepository.findReviews(questionId, lastReviewId, REVIEWS_SIZE)
                 .map(ReviewsResponseDto::new).collect(Collectors.toList());
     }
