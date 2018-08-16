@@ -1,7 +1,7 @@
 package com.banchan.service.question;
 
 import com.banchan.model.domain.question.DetailType;
-import com.banchan.model.dto.reviews.ReportRequestDto;
+import com.banchan.model.dto.questions.QuestionReportRequestDto;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.entity.User;
 import com.banchan.model.entity.Username;
