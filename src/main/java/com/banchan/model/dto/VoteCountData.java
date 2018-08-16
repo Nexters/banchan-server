@@ -5,10 +5,10 @@ import lombok.Data;
 @Data
 public class VoteCountData {
 
-    private Integer questionId;
+    private Long questionId;
     private Long count;
 
-    public VoteCountData(Integer questionId, Long count) {
+    public VoteCountData(Long questionId, Long count) {
         this.questionId = questionId;
         this.count = count;
     }

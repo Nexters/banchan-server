@@ -16,7 +16,7 @@ import java.util.Map;
 public class QuestionCard {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Integer id;
+    private Long id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer order;
@@ -42,7 +42,7 @@ public class QuestionCard {
 
     // Swagger 를 위한 getter
     @ApiModelProperty(hidden = true)
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

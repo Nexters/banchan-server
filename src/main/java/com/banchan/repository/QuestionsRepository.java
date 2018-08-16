@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
+public interface QuestionsRepository extends JpaRepository<Questions, Long> {
 
     @Query(value = "SELECT q.id, q.user_id, q.random_order, q.write_time, q.decision, q.report_state " +
                     "FROM (SELECT id, user_id, random_order, write_time, decision, report_state " +
@@ -28,9 +28,9 @@ public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
             nativeQuery = true
     )
     List<Questions> findNotVotedQuestions(
-            @Param("userId") int userId, @Param("randomOrder") int lastOrder, @Param("limit") int count);
+            @Param("userId") Long userId, @Param("randomOrder") int lastOrder, @Param("limit") int count);
 
-    Page<Questions> findAllByUserIdAndReportStateOrderByDecisionAscIdDesc(Integer userId, Integer reportState, Pageable pageable);
+    Page<Questions> findAllByUserIdAndReportStateOrderByDecisionAscIdDesc(Long userId, Integer reportState, Pageable pageable);
 
     @Query(value = "SELECT * " +
                     "FROM questions q " +
@@ -45,5 +45,5 @@ public interface QuestionsRepository extends JpaRepository<Questions, Integer> {
                     "ORDER BY v.vote_time DESC ",
             nativeQuery = true
     )
-    Page<Questions> findVotedQuestions(@Param("userId") int userId, Pageable pageable);
+    Page<Questions> findVotedQuestions(@Param("userId") Long userId, Pageable pageable);
 }

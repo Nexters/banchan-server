@@ -9,10 +9,10 @@ import javax.validation.constraints.NotNull;
 public class Vote {
 
     @NotNull
-    private Integer userId;
+    private Long userId;
 
     @NotNull
-    private Integer questionId;
+    private Long questionId;
 
     @NotNull
     private AnswerType answer;

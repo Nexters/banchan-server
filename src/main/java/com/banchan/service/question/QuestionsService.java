@@ -1,11 +1,10 @@
 package com.banchan.service.question;
 
 import com.banchan.model.domain.question.DetailType;
-import com.banchan.model.dto.questions.QuestionReportRequestDto;
-import com.banchan.model.dto.reviews.ReviewReportRequestDto;
-import com.banchan.model.dto.ReviewCountData;
+import com.banchan.model.dto.reviews.ReportRequestDto;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.entity.User;
+import com.banchan.model.entity.Username;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.model.vo.VoteCount;
@@ -65,19 +64,19 @@ public class QuestionsService {
         return question;
     }
 
-    public List<QuestionCard> findVotedQuestionCard(int userId, int page, int count){
+    public List<QuestionCard> findVotedQuestionCard(long userId, int page, int count){
         return this.findQuestionCardByQuestions(
                 questionsRepository.findVotedQuestions(userId, PageRequest.of(page, count))
                         .getContent());
     }
 
-    public List<QuestionCard> findUserMadeQuestionCard(int userId, int page, int count){
+    public List<QuestionCard> findUserMadeQuestionCard(long userId, int page, int count){
         return this.findQuestionCardByQuestions(
                 questionsRepository.findAllByUserIdAndReportStateOrderByDecisionAscIdDesc(userId, 0,  PageRequest.of(page, count))
                         .getContent());
     }
 
-    public List<QuestionCard> findNotVotedQuestionCard(int userId, int lastOrder, int count){
+    public List<QuestionCard> findNotVotedQuestionCard(long userId, int lastOrder, int count){
 
         List<QuestionCard> result = findQuestionCardByQuestions(
                 questionsRepository.findNotVotedQuestions(userId, lastOrder, count));
@@ -89,25 +88,42 @@ public class QuestionsService {
     private List<QuestionCard> findQuestionCardByQuestions(List<Questions> questions){
         if(questions == null || questions.size() == 0) throw new QuestionException("QuestionNotFound");
 
-        List<Integer> questionIds = questions.stream().map(Questions::getId).collect(Collectors.toList());
+        List<Long> questionIds = questions.stream().map(Questions::getId).collect(Collectors.toList());
         List<Long> userIds = questions.stream().map(Questions::getUserId).collect(Collectors.toList());
+
+        Username testName = new Username(1L, "슬픈", "개발자", null, null);
+
+        User test = new User(1L,
+                "TEST",
+                1,
+                20,
+                "Y",
+                "F",
+                null,
+                null,
+                testName);
 
         try {
 
             CompletableFuture<Map<Long, String>> cfUsernameMap = CompletableFuture
-                    .supplyAsync(() -> userRepository.findByIdIn(userIds).stream()
+                    .supplyAsync(() -> Optional.ofNullable(userRepository.findByIdIn(userIds))
+                            .orElse(Arrays.asList(new User[] {test}))
+                            .stream()
                             .collect(Collectors.toMap(
                                     User::getId,
-                                    user -> user.getUsername().getPrefix() + " " + user.getUsername().getPostfix()
+                                    user -> Optional.ofNullable(user.getUsername())
+                                            .orElse(testName).getPrefix() + " " +
+                                            Optional.ofNullable(user.getUsername())
+                                                    .orElse(testName).getPostfix()
                             )));
 
-            CompletableFuture<Map<Integer, Map<DetailType, String>>> cfDetailMap =
+            CompletableFuture<Map<Long, Map<DetailType, String>>> cfDetailMap =
                     questionDetailsService.findQuestionDetails(questionIds);
 
-            CompletableFuture<Map<Integer, VoteCount>> cfVoteCountMap =
+            CompletableFuture<Map<Long, VoteCount>> cfVoteCountMap =
                     votesService.findVoteCount(questionIds);
 
-            CompletableFuture<Map<Integer, Long>> cfReviewCountMap =
+            CompletableFuture<Map<Long, Long>> cfReviewCountMap =
                     reviewsService.findReviewCount(questionIds);
 
             return CompletableFuture.allOf(cfUsernameMap, cfDetailMap, cfVoteCountMap, cfReviewCountMap)
@@ -127,14 +143,14 @@ public class QuestionsService {
     private List<QuestionCard> toQuestionCards(
             List<Questions> questions,
             Map<Long, String> usernameMap,
-            Map<Integer, Map<DetailType, String>> detailMap,
-            Map<Integer, VoteCount> voteCountMap,
-            Map<Integer, Long> reviewCountMap){
+            Map<Long, Map<DetailType, String>> detailMap,
+            Map<Long, VoteCount> voteCountMap,
+            Map<Long, Long> reviewCountMap){
 
         return questions.stream()
                 .map(question -> QuestionCard.builder()
                         .id(question.getId())
-                        .username(usernameMap.get(question.getUserId()))
+                        .username(Optional.ofNullable(usernameMap.get(question.getUserId())).orElse("살려줘 제발"))
                         .order(question.getRandomOrder())
                         .userId(question.getUserId())
                         .detail(detailMap.get(question.getId()))
@@ -153,7 +169,7 @@ public class QuestionsService {
     public Integer saveReport(QuestionReportRequestDto dto) {
         Integer reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
         if (reportsRepository.countByQuestionId(dto.getQuestionId()) >= REPORT_MAX_SIZE) {
-            Questions question = questionsRepository.findById(dto.getQuestionId()).get();
+            Questions question = questionsRepository.findById(Long.valueOf(dto.getQuestionId())).get();
             question.report();
             questionsRepository.save(question);
         }
