@@ -12,7 +12,7 @@ public class Vote {
     private Long userId;
 
     @NotNull
-    private Integer questionId;
+    private Long questionId;
 
     @NotNull
     private AnswerType answer;

@@ -14,13 +14,13 @@ public class VotesA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "question_id")
-    private Integer questionId;
+    private Long questionId;
 
     @Column(name = "vote_time")
     private LocalDateTime voteTime;

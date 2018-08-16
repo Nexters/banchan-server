@@ -20,9 +20,9 @@ data class User(
 
         @Column
         val age: Integer,
-
-        @Column
-        val color: String,
+//
+//        @Column
+//        val color: String,
 
         @Column(name = "use_yn")
         val useYn: String = "Y",

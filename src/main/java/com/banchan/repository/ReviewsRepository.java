@@ -1,7 +1,6 @@
 package com.banchan.repository;
 
 import com.banchan.model.dto.ReviewCountData;
-import com.banchan.model.dto.VoteCountData;
 import com.banchan.model.entity.Reviews;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

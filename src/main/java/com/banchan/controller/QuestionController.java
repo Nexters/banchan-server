@@ -34,7 +34,7 @@ public class QuestionController {
                     "응답: 영향 받은 사람 수 (현재는 -1이 리턴)"
     )
     @RequestMapping(value = "vote", method = RequestMethod.POST)
-    public CommonResponse<Integer> addVote(@RequestBody Vote vote){
+    public CommonResponse<Double> addVote(@RequestBody Vote vote){
         return CommonResponse.success(votesService.add(vote));
     }
 

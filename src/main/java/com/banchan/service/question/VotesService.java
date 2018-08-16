@@ -22,7 +22,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,19 +34,20 @@ public class VotesService {
     @Autowired QuestionsRepository questionsRepository;
     @Autowired RewardHistoryRepository rewardHistoryRepository;
 
+    // properties 에 추가 예정
     private static final long VOTE_COUNT_CONSTRAINT = 5;
     private static final long QUESTION_TIME_CONSTRAINT = 30;
 
-    private static final int VOTE_COUNT_REWARD = 10;
-    private static final int QUESTION_TIME_REWARD = 10;
+    private static final double VOTE_COUNT_REWARD = 10; // %
+    private static final double QUESTION_TIME_REWARD = 10; // %
 
-    private static final int RANDOM_REWARD_MIN = 10;
-    private static final int RANDOM_REWARD_MAX = 90 - RANDOM_REWARD_MIN;
+    private static final int RANDOM_REWARD_MIN = 10; // %
+    private static final int RANDOM_REWARD_MAX = 90 - RANDOM_REWARD_MIN; // %
 
-    private static final int SAME_REWARD = 10;
+    private static final double SAME_REWARD = 10; //%
 
     @Transactional
-    public int add(Vote vote){
+    public double add(Vote vote){
         Questions question = questionsRepository.findById(vote.getQuestionId())
                 .orElseThrow(() -> new QuestionException("해당 질문이 없습니다."));
 
@@ -57,49 +57,60 @@ public class VotesService {
             return distributeReward(vote);
         }
 
-        Stream.of(reward(vote, question))
-                .peek(rewardHistoryRepository::saveAll)
-                .map()
-
         saveVote(vote);
+        return reward(vote, question);
     }
 
     private int distributeReward(Vote vote){
-        if(AnswerType.A.equals(vote.getAnswer()))
-            votesARepository.findAllByQuestionId(vote.getQuestionId()).stream();
-        else
-            votesBRepository.findAllByQuestionId(vote.getQuestionId()).stream();
+        Stream<Long> stream = null;
 
-        return -1; // 적용된 사람들 숫자?
+        if(AnswerType.A.equals(vote.getAnswer()))
+            stream = votesARepository.findAllByQuestionId(vote.getQuestionId()).stream()
+                    .map(VotesA::getUserId);
+        else
+            stream = votesBRepository.findAllByQuestionId(vote.getQuestionId()).stream()
+                    .map(VotesB::getUserId);
+
+        return Stream.of(stream
+                .map(userId -> this.makeRewardHistory(userId, RewardType.SAME, this.SAME_REWARD / 100))
+                .collect(Collectors.toList()))
+                .peek(rewardHistoryRepository::saveAll)
+                .map(List::size)
+                .findAny().orElse(0);
     }
 
-    private List<RewardHistory> reward(Vote vote, Questions question) {
+    private Double reward(Vote vote, Questions question) {
         List<RewardHistory> rewardHistories = new ArrayList<>();
 
         rewardHistories.add(this.rewardInNew(vote, question));
         rewardHistories.add(this.rewardInFirst(vote, question));
         rewardHistories.add(this.rewardInRandom(vote));
 
-        return rewardHistories;
+        rewardHistoryRepository.saveAll(rewardHistories);
+
+        return rewardHistories.stream()
+                .map(reward -> reward != null ? reward.getReward() : 0.0)
+                .reduce((d1, d2) -> d1 +  d2).orElse(0.0);
     }
 
     private RewardHistory rewardInNew(Vote vote, Questions question){
         return question.getWriteTime()
                 .plus(Duration.ofMinutes(this.QUESTION_TIME_CONSTRAINT))
                 .isBefore(LocalDateTime.now()) ?
-                this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM, new Random().nextDouble()) :
+                this.makeRewardHistory(vote.getUserId(), RewardType.NEW, this.QUESTION_TIME_REWARD / 100) :
                 null;
     }
 
     private RewardHistory rewardInFirst(Vote vote, Questions question){
         return votesARepository.countAllByQuestionId(question.getId()).longValue() < this.VOTE_COUNT_CONSTRAINT ?
-                this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM, new Random().nextDouble()) :
+                this.makeRewardHistory(vote.getUserId(), RewardType.FIRST, this.VOTE_COUNT_REWARD / 100) :
                 null;
     }
 
     private RewardHistory rewardInRandom(Vote vote){
         return vote.isRandom() ?
-                this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM, new Random().nextDouble()) :
+                this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM,
+                        ((double) new Random().nextInt(this.RANDOM_REWARD_MAX) + this.RANDOM_REWARD_MIN) / 100) :
                 null;
     }
 
@@ -135,16 +146,16 @@ public class VotesService {
         return vote;
     }
 
-    public CompletableFuture<Map<Integer, VoteCount>> findVoteCount(List<Integer> questionIds){
+    public CompletableFuture<Map<Long, VoteCount>> findVoteCount(List<Long> questionIds){
 
         return votesARepository.countByQuestionIdInGroupByQuestion(questionIds)
                 .thenCombine(votesBRepository.countByQuestionIdInGroupByQuestion(questionIds),
                         (countA, countB) -> {
-                            Map<Integer, Long> mapA = countA.stream()
+                            Map<Long, Long> mapA = countA.stream()
                                     .collect(Collectors.toMap(
                                             VoteCountData::getQuestionId,
                                             VoteCountData::getCount));
-                            Map<Integer, Long> mapB = countB.stream()
+                            Map<Long, Long> mapB = countB.stream()
                                     .collect(Collectors.toMap(
                                             VoteCountData::getQuestionId,
                                             VoteCountData::getCount));

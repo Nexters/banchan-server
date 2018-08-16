@@ -9,10 +9,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public interface VotesARepository extends JpaRepository<VotesA, Integer> {
+public interface VotesARepository extends JpaRepository<VotesA, Long> {
 
     @Query("SELECT NEW com.banchan.model.dto.VoteCountData(v.questionId, COUNT(v)) FROM VotesA v WHERE v.questionId IN (:questionIds) GROUP BY v.questionId")
-    CompletableFuture<List<VoteCountData>> countByQuestionIdInGroupByQuestion(@Param("questionIds") List<Integer> questionIds);
+    CompletableFuture<List<VoteCountData>> countByQuestionIdInGroupByQuestion(@Param("questionIds") List<Long> questionIds);
 
     @Query(
             value = "SELECT SUM(cnt) FROM( " +
@@ -23,7 +23,7 @@ public interface VotesARepository extends JpaRepository<VotesA, Integer> {
                     "WHERE question_id = :questionId) v",
             nativeQuery = true
     )
-    Number countAllByQuestionId(@Param("questionId") int questionId);
+    Number countAllByQuestionId(@Param("questionId") long questionId);
 
-    List<VotesA> findAllByQuestionId(int questionId);
+    List<VotesA> findAllByQuestionId(long questionId);
 }

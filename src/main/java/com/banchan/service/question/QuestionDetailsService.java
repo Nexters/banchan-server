@@ -17,7 +17,7 @@ public class QuestionDetailsService {
 
     @Autowired private QuestionDetailsRepository questionDetailsRepository;
 
-    public List<QuestionDetails> add(int questionId, Map<DetailType, String> details){
+    public List<QuestionDetails> add(Long questionId, Map<DetailType, String> details){
 
         return questionDetailsRepository.saveAll(
                 EntryStream.of(details)
@@ -30,7 +30,7 @@ public class QuestionDetailsService {
 
     }
 
-    public CompletableFuture<Map<Integer, Map<DetailType, String>>> findQuestionDetails(List<Integer> questionIds){
+    public CompletableFuture<Map<Long, Map<DetailType, String>>> findQuestionDetails(List<Long> questionIds){
 
         return questionDetailsRepository.findALLByQuestionIdInOrderByQuestionIdAsc(questionIds)
                 .thenApply(details ->

@@ -71,8 +71,9 @@ public class ReviewsService {
         return reportsRepository.countByUserIdAndReviewId(dto.getUserId(), dto.getReviewId()) >= 1;
     }
 
-    public CompletableFuture<Map<Integer, Long>> findReviewCount(List<Integer> questionIds){
-        return reviewsRepository.countByQuestionIdInGroupByQuestion(questionIds)
+    public CompletableFuture<Map<Long, Long>> findReviewCount(List<Long> questionIds){
+        return reviewsRepository.countByQuestionIdInGroupByQuestion(
+                questionIds.stream().map(Long::intValue).collect(Collectors.toList()))
                 .thenApply(reviewCountData -> reviewCountData.stream()
                         .collect(Collectors.toMap(
                                 ReviewCountData::getQuestionId,

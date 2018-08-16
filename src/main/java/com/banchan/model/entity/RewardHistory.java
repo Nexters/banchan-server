@@ -1,16 +1,16 @@
 package com.banchan.model.entity;
 
-import com.banchan.model.domain.question.AnswerType;
 import com.banchan.model.domain.question.RewardType;
 import com.banchan.model.domain.question.RewardTypeAttributeConverter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Builder
 @Entity
+@Data
 @Table(name = "reward_histories")
 public class RewardHistory {
 

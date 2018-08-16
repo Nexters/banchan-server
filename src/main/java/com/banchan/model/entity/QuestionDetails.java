@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class QuestionDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "type")
     @Convert(converter = DetailTypeAttributeConverter.class)
@@ -24,5 +24,5 @@ public class QuestionDetails {
     private String content;
 
     @Column(name = "question_id")
-    private Integer questionId;
+    private Long questionId;
 }
