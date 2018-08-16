@@ -80,17 +80,16 @@ public class VotesService {
     }
 
     private Double reward(Vote vote, Questions question) {
-        List<RewardHistory> rewardHistories = new ArrayList<>();
-
-        rewardHistories.add(this.rewardInNew(vote, question));
-        rewardHistories.add(this.rewardInFirst(vote, question));
-        rewardHistories.add(this.rewardInRandom(vote));
-
-        rewardHistoryRepository.saveAll(rewardHistories);
-
-        return rewardHistories.stream()
-                .map(reward -> reward != null ? reward.getReward() : 0.0)
-                .reduce((d1, d2) -> d1 +  d2).orElse(0.0);
+        return Stream.of(Arrays.stream(new RewardHistory[] {
+                this.rewardInNew(vote, question),
+                this.rewardInFirst(vote, question),
+                this.rewardInRandom(vote)})
+                .filter(rewardHistory -> rewardHistory != null)
+                .collect(Collectors.toList()))
+                .peek(rewardHistoryRepository::saveAll)
+                .flatMap(rewardHistories -> rewardHistories.stream())
+                .map(RewardHistory::getReward)
+                .reduce((r1, r2) -> r1 + r2).orElse(0.0);
     }
 
     private RewardHistory rewardInNew(Vote vote, Questions question){
