@@ -11,7 +11,7 @@ import lombok.Setter;
 public class ReviewsSaveRequestDto {
 
     private Integer questionId;
-    private Integer userId;
+    private Long userId;
     private String content;
 
     public Reviews toEntity() {
