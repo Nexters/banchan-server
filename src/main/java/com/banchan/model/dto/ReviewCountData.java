@@ -8,7 +8,7 @@ public class ReviewCountData {
     private Long questionId;
     private Long reviewCount;
 
-    public ReviewCountData(Integer questionId, Long reviewCount) {
+    public ReviewCountData(Long questionId, Long reviewCount) {
         this.questionId = questionId.longValue();
         this.reviewCount = reviewCount;
     }
