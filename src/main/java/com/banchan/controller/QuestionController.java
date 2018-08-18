@@ -35,6 +35,7 @@ public class QuestionController {
                     "유저가 질문 작성자일 경우 질문에 최종 결정을 하게 됨 / " +
                     "응답: 영향 받은 사람 수 (현재는 -1이 리턴)"
     )
+    @BanchanAuth
     @RequestMapping(value = "vote", method = RequestMethod.POST)
     public CommonResponse<Double> addVote(@RequestBody Vote vote){
         return CommonResponse.success(votesService.add(vote));
@@ -49,6 +50,7 @@ public class QuestionController {
                     "}" +
                     " / userId - 어떤 유저가 투표했는지"
     )
+    @BanchanAuth
     @RequestMapping(value = "questionCard", method = RequestMethod.POST)
     public CommonResponse<Questions> addQuestions(@Valid @RequestBody QuestionCard questionCard, BindingResult bindingResult){
         if(bindingResult.hasErrors()) return CommonResponse.FAIL;
@@ -65,6 +67,7 @@ public class QuestionController {
             @ApiImplicitParam(name = "lastOrder", value = "마지막 조회한 질문의 order", required = true, paramType = "path", defaultValue = "0"),
             @ApiImplicitParam(name = "count", value = "조회할 질문 수", required = true, paramType = "path")
     })
+    @BanchanAuth
     @RequestMapping(value = "user/{userId}/notVotedQuestions/{lastOrder}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> findNotVotedQuestions(
             @PathVariable("userId") int userId, @PathVariable("lastOrder") int lastOrder, @PathVariable("count") int count) {
@@ -80,6 +83,7 @@ public class QuestionController {
             @ApiImplicitParam(name = "page", value = "페이지네이션 번호", required = true, paramType = "path", defaultValue = "0"),
             @ApiImplicitParam(name = "count", value = "조회할 질문 수", required = true, paramType = "path")
     })
+    @BanchanAuth
     @RequestMapping(value = "user/{userId}/userMadeQuestions/{page}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> userMadeQuestions(
             @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
@@ -95,6 +99,7 @@ public class QuestionController {
             @ApiImplicitParam(name = "page", value = "페이지네이션 번호", required = true, paramType = "path", defaultValue = "0"),
             @ApiImplicitParam(name = "count", value = "조회할 질문 수", required = true, paramType = "path")
     })
+    @BanchanAuth
     @RequestMapping(value = "user/{userId}/votedQuestions/{page}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> findVotedQuestions(
             @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
