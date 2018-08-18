@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ReviewsSaveRequestDto {
 
-    private Integer questionId;
+    private Long questionId;
     private Long userId;
     private String content;
 

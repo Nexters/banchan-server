@@ -20,7 +20,7 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Integer> {
             "LIMIT :REVIEWS_SIZE ",
     nativeQuery = true)
     Stream<Reviews> findReviews(
-            @Param("questionId") Integer questionId,
+            @Param("questionId") Long questionId,
             @Param("lastReviewId") Integer lastReviewId,
             @Param("REVIEWS_SIZE") int REVIEWS_SIZE);
 

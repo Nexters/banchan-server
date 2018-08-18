@@ -13,15 +13,16 @@ import java.util.Optional;
 public class ReviewsResponseDto {
 
     private Integer id;
-    private Integer questionId;
+    private Long questionId;
     private String userName;
     private String content;
     private Integer reportState;
     private String createdAt;
     private String updatedAt;
-    private String answer;
+    private Long userId;
+    private Integer answer; //0: 작성자, 1: A or O 답변, 2: B or X 답변
 
-    public ReviewsResponseDto(Reviews entity) {
+    public ReviewsResponseDto(Reviews entity, Integer answer) {
         this.id = entity.getId();
         this.questionId = entity.getQuestionId();
         System.out.println(entity.getUser());
@@ -30,6 +31,9 @@ public class ReviewsResponseDto {
         this.reportState = entity.getReportState();
         this.createdAt = toStringDateTime(entity.getCreatedAt());
         this.updatedAt = toStringDateTime(entity.getUpdatedAt());
+        System.out.println(answer);
+        this.userId = entity.getUser().getId();
+        this.answer = answer;
     }
 
     private String toStringDateTime(LocalDateTime localDateTime){

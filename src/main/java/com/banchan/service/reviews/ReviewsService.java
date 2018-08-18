@@ -10,6 +10,7 @@ import com.banchan.model.entity.User;
 import com.banchan.repository.ReportsRepository;
 import com.banchan.repository.ReviewsRepository;
 import com.banchan.repository.UserRepository;
+import com.banchan.service.question.VotesService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,14 +27,17 @@ public class ReviewsService {
     private ReportsRepository reportsRepository;
     private UserRepository userRepository;
 
+    private VotesService votesService;
+
     // 클라이언트에 1번에 전달해 줄 댓글의 갯수
     final static int REVIEWS_SIZE = 10;
     @Transactional(readOnly = true)
-    public List<ReviewsResponseDto> findReviews(Integer questionId, Integer lastReviewId) {
+    public List<ReviewsResponseDto> findReviews(Long questionId, Integer lastReviewId) {
         //lastReviewId == 0 => 질문카드 댓글요청 첫 페이지일 경우 lastReviewId에 Integer.MAX_VALUE 대입
         lastReviewId = (lastReviewId == 0) ? Integer.MAX_VALUE : lastReviewId;
         return reviewsRepository.findReviews(questionId, lastReviewId, REVIEWS_SIZE)
-                .map(ReviewsResponseDto::new).collect(Collectors.toList());
+                .map((x) -> new ReviewsResponseDto(x, votesService.getAnswer(questionId, x)))
+                .collect(Collectors.toList());
     }
 
     @Transactional

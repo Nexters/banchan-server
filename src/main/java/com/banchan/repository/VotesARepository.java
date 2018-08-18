@@ -1,11 +1,13 @@
 package com.banchan.repository;
 
 import com.banchan.model.dto.VoteCountData;
+import com.banchan.model.entity.User;
 import com.banchan.model.entity.VotesA;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -26,4 +28,6 @@ public interface VotesARepository extends JpaRepository<VotesA, Long> {
     Number countAllByQuestionId(@Param("questionId") long questionId);
 
     List<VotesA> findAllByQuestionId(long questionId);
+
+    Integer countByQuestionIdAndUserId(Long questionId, long id);
 }
