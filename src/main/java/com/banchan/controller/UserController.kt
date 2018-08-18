@@ -1,5 +1,6 @@
 package com.banchan.controller
 
+import com.banchan.model.dto.UserData
 import com.banchan.model.entity.NameWords
 import com.banchan.model.entity.User
 import com.banchan.model.response.CommonResponse
@@ -23,7 +24,12 @@ open class UserController (
     @ResponseBody
     @GetMapping("/names")
     fun findNameWords(): CommonResponse<List<NameWords>> {
-        return CommonResponse.success(nameService.find());
+        return CommonResponse.success(nameService.find())
     }
 
+    @ResponseBody
+    @GetMapping("/{userId}")
+    fun findUser(@PathVariable("userId") userId: Long): CommonResponse<UserData> {
+        return CommonResponse.success(userService.find(userId))
+    }
 }

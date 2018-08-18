@@ -95,7 +95,6 @@ public class QuestionsService {
 
         User test = new User(1L,
                 "TEST",
-                1,
                 20,
                 "Y",
                 "F",

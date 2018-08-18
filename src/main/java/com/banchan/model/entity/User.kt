@@ -15,9 +15,6 @@ data class User(
         @Column(name = "device_key", nullable = false)
         val deviceKey: String,
 
-        @Column(name = "username_id")
-        val usernameId: Long,
-
         @Column
         val age: Integer,
 //
@@ -36,8 +33,8 @@ data class User(
         @Column(name = "created_at")
         val createdAt: LocalDateTime? = LocalDateTime.now(),
 
-        @OneToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name="id", referencedColumnName = "username_id")
+        @OneToOne(fetch = FetchType.EAGER, cascade = arrayOf(CascadeType.ALL))
+        @JoinColumn(name="username_id")
         val username: Username
 ) {
     @Transient
