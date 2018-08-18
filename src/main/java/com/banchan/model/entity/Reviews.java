@@ -20,8 +20,9 @@ public class Reviews extends BaseTimeEntity {
     @Column(name = "question_id", nullable = false)
     private Integer questionId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long uesrId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
@@ -33,10 +34,10 @@ public class Reviews extends BaseTimeEntity {
     private Integer deleteState;
 
     @Builder
-    public Reviews(Integer questionId, Long uesrId, String content,
+    public Reviews(Integer questionId, User user, String content,
                    Integer reportState, Integer deleteState) {
         this.questionId = questionId;
-        this.uesrId = uesrId;
+        this.user = user;
         this.content = content;
         this.reportState = reportState;
         this.deleteState = deleteState;

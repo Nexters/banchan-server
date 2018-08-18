@@ -6,8 +6,10 @@ import com.banchan.model.dto.reviews.ReviewsResponseDto;
 import com.banchan.model.dto.reviews.ReviewsSaveRequestDto;
 import com.banchan.model.dto.reviews.ReviewsUpdateRequestDto;
 import com.banchan.model.entity.Reviews;
+import com.banchan.model.entity.User;
 import com.banchan.repository.ReportsRepository;
 import com.banchan.repository.ReviewsRepository;
+import com.banchan.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class ReviewsService {
     private ReviewsRepository reviewsRepository;
     private ReportsRepository reportsRepository;
+    private UserRepository userRepository;
 
     // 클라이언트에 1번에 전달해 줄 댓글의 갯수
     final static int REVIEWS_SIZE = 10;
@@ -35,7 +38,8 @@ public class ReviewsService {
 
     @Transactional
     public Integer save(ReviewsSaveRequestDto dto) {
-        return reviewsRepository.save(dto.toEntity()).getId();
+        User user = userRepository.findById(dto.getUserId()).get();
+        return reviewsRepository.save(dto.toEntity(user)).getId();
     }
 
     @Transactional

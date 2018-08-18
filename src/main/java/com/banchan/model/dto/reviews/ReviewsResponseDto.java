@@ -1,6 +1,8 @@
 package com.banchan.model.dto.reviews;
 
 import com.banchan.model.entity.Reviews;
+import com.banchan.model.entity.User;
+import com.banchan.model.entity.Username;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -12,16 +14,18 @@ public class ReviewsResponseDto {
 
     private Integer id;
     private Integer questionId;
-    private Long uesrId;
+    private String userName;
     private String content;
     private Integer reportState;
     private String createdAt;
     private String updatedAt;
+    private String answer;
 
     public ReviewsResponseDto(Reviews entity) {
         this.id = entity.getId();
         this.questionId = entity.getQuestionId();
-        this.uesrId = entity.getUesrId();
+        System.out.println(entity.getUser());
+        this.userName = entity.getUser().getUsername().getPrefix() + " " + entity.getUser().getUsername().getPostfix();
         this.content = entity.getContent();
         this.reportState = entity.getReportState();
         this.createdAt = toStringDateTime(entity.getCreatedAt());
