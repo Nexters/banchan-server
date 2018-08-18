@@ -1,6 +1,7 @@
 package com.banchan.service.user
 
 import com.banchan.config.Cryption
+import com.banchan.model.dto.UserData
 import com.banchan.model.entity.NameWords
 import com.banchan.model.entity.User
 import com.banchan.model.entity.UserAuthInfo
@@ -28,5 +29,9 @@ open class UserService (
 
     fun auth(userId:Long, tokkenKey:String): Boolean {
         return userAuthInfoRepository.countByUserIdAndTokenKey(userId, tokkenKey) > 0
+    }
+
+    fun find(userId: Long): UserData {
+        return userRepository.findUserDataByUserId(userId);
     }
 }

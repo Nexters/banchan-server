@@ -4,10 +4,7 @@ import com.banchan.model.domain.question.AnswerType;
 import com.banchan.model.domain.question.RewardType;
 import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.VoteCountData;
-import com.banchan.model.entity.Questions;
-import com.banchan.model.entity.RewardHistory;
-import com.banchan.model.entity.VotesA;
-import com.banchan.model.entity.VotesB;
+import com.banchan.model.entity.*;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionsRepository;
@@ -177,5 +174,15 @@ public class VotesService {
                                                     Optional.ofNullable(mapA.get(questionId)).orElse((long) 0),
                                                     Optional.ofNullable(mapB.get(questionId)).orElse((long) 0))));
                         });
+    }
+
+    public Integer getAnswer(Long questionId, Reviews reviews) {
+        if ( questionsRepository.findById(questionId).get().getUserId() == reviews.getUser().getId()) {
+            return 0;
+        }
+        if ( votesARepository.countByQuestionIdAndUserId(questionId, reviews.getUser().getId()) >= 1) {
+            return 1;
+        }
+        return 2;
     }
 }

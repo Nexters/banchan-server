@@ -28,7 +28,7 @@ public class ReviewsController {
      * @param lastReviewId | 클라이언트가 마지막으로 받은 댓글의 ID
      */
     @ApiOperation(value = "댓글 조회", notes = "해당 게시물의 댓글을 최신순, lastReviewId 이후의 댓글들을" +
-            " REVIEWS_SIZE(10개) 조회")
+            " REVIEWS_SIZE(10개) 조회 / answer: 0(작성자), 1(A or O 답변, 2(B or X 답변)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "questionId", value = "질문카드 id",
                     required = true, dataType = "int", paramType = "path", defaultValue = ""),
@@ -37,7 +37,7 @@ public class ReviewsController {
     })
     @BanchanAuth
     @GetMapping("question/{questionId}/last-review/{lastReviewId}")
-    public CommonResponse<List<ReviewsResponseDto>> findReviews(@PathVariable("questionId") Integer questionId,
+    public CommonResponse<List<ReviewsResponseDto>> findReviews(@PathVariable("questionId") Long questionId,
                                                                 @PathVariable("lastReviewId") Integer lastReviewId) {
         return CommonResponse.success(reviewsService.findReviews(questionId, lastReviewId));
     }
