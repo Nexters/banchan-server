@@ -15,6 +15,7 @@ import com.banchan.repository.RewardHistoryRepository;
 import com.banchan.repository.VotesARepository;
 import com.banchan.repository.VotesBRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,16 +36,26 @@ public class VotesService {
     @Autowired RewardHistoryRepository rewardHistoryRepository;
 
     // properties 에 추가 예정
-    private static final long VOTE_COUNT_CONSTRAINT = 5;
-    private static final long QUESTION_TIME_CONSTRAINT = 30;
+    @Value("${reward.constraint.speaker}")
+    private int constraintFirst;
 
-    private static final double VOTE_COUNT_REWARD = 10; // %
-    private static final double QUESTION_TIME_REWARD = 10; // %
+    @Value("${reward.constraint.new}")
+    private int constraintNew;
 
-    private static final int RANDOM_REWARD_MIN = 10; // %
-    private static final int RANDOM_REWARD_MAX = 90 - RANDOM_REWARD_MIN; // %
+    @Value("${reward.value.speaker}")
+    private int valueFirst;
 
-    private static final double SAME_REWARD = 10; //%
+    @Value("${reward.value.new}")
+    private int valueNew;
+
+    @Value("${reward.value.random.min}")
+    private int valueRandomMin;
+
+    @Value("${reward.value.random.max}")
+    private int valueRandomMax;
+
+    @Value("${reward.value.decision}")
+    private int valueDecision;
 
     @Transactional
     public double add(Vote vote){
@@ -72,7 +83,7 @@ public class VotesService {
                     .map(VotesB::getUserId);
 
         return Stream.of(stream
-                .map(userId -> this.makeRewardHistory(userId, RewardType.SAME, this.SAME_REWARD / 100))
+                .map(userId -> this.makeRewardHistory(userId, RewardType.SAME, this.valueDecision / 100.0))
                 .collect(Collectors.toList()))
                 .peek(rewardHistoryRepository::saveAll)
                 .map(List::size)
@@ -94,22 +105,22 @@ public class VotesService {
 
     private RewardHistory rewardInNew(Vote vote, Questions question){
         return question.getWriteTime()
-                .plus(Duration.ofMinutes(this.QUESTION_TIME_CONSTRAINT))
+                .plus(Duration.ofMinutes(this.constraintNew))
                 .isBefore(LocalDateTime.now()) ?
-                this.makeRewardHistory(vote.getUserId(), RewardType.NEW, this.QUESTION_TIME_REWARD / 100) :
+                this.makeRewardHistory(vote.getUserId(), RewardType.NEW, this.valueNew / 100.0) :
                 null;
     }
 
     private RewardHistory rewardInFirst(Vote vote, Questions question){
-        return votesARepository.countAllByQuestionId(question.getId()).longValue() < this.VOTE_COUNT_CONSTRAINT ?
-                this.makeRewardHistory(vote.getUserId(), RewardType.FIRST, this.VOTE_COUNT_REWARD / 100) :
+        return votesARepository.countAllByQuestionId(question.getId()).longValue() < this.constraintFirst ?
+                this.makeRewardHistory(vote.getUserId(), RewardType.FIRST, this.valueFirst / 100.0) :
                 null;
     }
 
     private RewardHistory rewardInRandom(Vote vote){
         return vote.isRandom() ?
                 this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM,
-                        ((double) new Random().nextInt(this.RANDOM_REWARD_MAX) + this.RANDOM_REWARD_MIN) / 100) :
+                        (new Random().nextInt(this.valueRandomMax - this.valueRandomMin + 1) + this.valueRandomMin) / 100.0) :
                 null;
     }
 
