@@ -1,6 +1,7 @@
 package com.banchan.model.vo;
 
 import com.banchan.model.domain.question.DetailType;
+import com.banchan.model.domain.question.QuestionType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -23,6 +24,9 @@ public class QuestionCard {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String username;
+
+    @NotNull
+    private QuestionType type;
 
     @NotNull
     private Long userId;

@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface QuestionsRepository extends JpaRepository<Questions, Long> {
 
-    @Query(value = "SELECT q.id, q.user_id, q.random_order, q.write_time, q.decision, q.report_state " +
-                    "FROM (SELECT id, user_id, random_order, write_time, decision, report_state " +
+    @Query(value = "SELECT q.id, q.user_id, q.random_order, q.write_time, q.decision, q.report_state, q.type " +
+                    "FROM (SELECT id, user_id, random_order, write_time, decision, report_state, type " +
                     "   FROM  questions " +
                     "   WHERE random_order > :randomOrder AND decision IS NULL AND report_state = 0 AND user_id != :userId) q " +
                     "LEFT JOIN ( " +
