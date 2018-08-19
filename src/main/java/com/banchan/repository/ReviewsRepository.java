@@ -25,6 +25,6 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Integer> {
             @Param("REVIEWS_SIZE") int REVIEWS_SIZE);
 
     @Query("SELECT NEW com.banchan.model.dto.ReviewCountData(r.questionId, COUNT(r)) FROM Reviews r WHERE r.questionId IN (:questionIds) GROUP BY r.questionId")
-    CompletableFuture<List<ReviewCountData>> countByQuestionIdInGroupByQuestion(@Param("questionIds") List<Integer> questionIds);
+    CompletableFuture<List<ReviewCountData>> countByQuestionIdInGroupByQuestion(@Param("questionIds") List<Long> questionIds);
 
 }

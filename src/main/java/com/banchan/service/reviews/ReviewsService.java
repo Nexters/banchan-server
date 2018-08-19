@@ -80,8 +80,7 @@ public class ReviewsService {
     }
 
     public CompletableFuture<Map<Long, Long>> findReviewCount(List<Long> questionIds){
-        return reviewsRepository.countByQuestionIdInGroupByQuestion(
-                questionIds.stream().map(Long::intValue).collect(Collectors.toList()))
+        return reviewsRepository.countByQuestionIdInGroupByQuestion(questionIds)
                 .thenApply(reviewCountData -> reviewCountData.stream()
                         .collect(Collectors.toMap(
                                 ReviewCountData::getQuestionId,
