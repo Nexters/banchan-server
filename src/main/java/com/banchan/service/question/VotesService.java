@@ -40,6 +40,9 @@ public class VotesService {
     private int constraintNew;
 
     @Value("${reward.value.speaker}")
+    private int valueBasic;
+
+    @Value("${reward.value.speaker}")
     private int valueFirst;
 
     @Value("${reward.value.new}")
@@ -53,6 +56,8 @@ public class VotesService {
 
     @Value("${reward.value.decision}")
     private int valueDecision;
+
+    private static final double DIVISION = 10.0;
 
     @Transactional
     public double add(Vote vote){
@@ -80,7 +85,7 @@ public class VotesService {
                     .map(VotesB::getUserId);
 
         return Stream.of(stream
-                .map(userId -> this.makeRewardHistory(userId, RewardType.SAME, this.valueDecision / 100.0))
+                .map(userId -> this.makeRewardHistory(userId, RewardType.SAME, this.valueDecision / this.DIVISION))
                 .collect(Collectors.toList()))
                 .peek(rewardHistoryRepository::saveAll)
                 .map(List::size)
@@ -89,6 +94,7 @@ public class VotesService {
 
     private Double reward(Vote vote, Questions question) {
         return Stream.of(Arrays.stream(new RewardHistory[] {
+                this.rewardInBasic(vote),
                 this.rewardInNew(vote, question),
                 this.rewardInFirst(vote, question),
                 this.rewardInRandom(vote)})
@@ -100,24 +106,28 @@ public class VotesService {
                 .reduce((r1, r2) -> r1 + r2).orElse(0.0);
     }
 
+    private RewardHistory rewardInBasic(Vote vote){
+        return this.makeRewardHistory(vote.getUserId(), RewardType.BASIC, this.valueBasic / this.DIVISION);
+    }
+
     private RewardHistory rewardInNew(Vote vote, Questions question){
-        return question.getWriteTime()
+        return !question.getWriteTime()
                 .plus(Duration.ofMinutes(this.constraintNew))
                 .isBefore(LocalDateTime.now()) ?
-                this.makeRewardHistory(vote.getUserId(), RewardType.NEW, this.valueNew / 100.0) :
+                this.makeRewardHistory(vote.getUserId(), RewardType.NEW, this.valueNew / this.DIVISION) :
                 null;
     }
 
     private RewardHistory rewardInFirst(Vote vote, Questions question){
         return votesARepository.countAllByQuestionId(question.getId()).longValue() < this.constraintFirst ?
-                this.makeRewardHistory(vote.getUserId(), RewardType.FIRST, this.valueFirst / 100.0) :
+                this.makeRewardHistory(vote.getUserId(), RewardType.FIRST, this.valueFirst / this.DIVISION) :
                 null;
     }
 
     private RewardHistory rewardInRandom(Vote vote){
         return vote.isRandom() ?
                 this.makeRewardHistory(vote.getUserId(), RewardType.RANDOM,
-                        (new Random().nextInt(this.valueRandomMax - this.valueRandomMin + 1) + this.valueRandomMin) / 100.0) :
+                        (new Random().nextInt(this.valueRandomMax - this.valueRandomMin + 1) + this.valueRandomMin) / this.DIVISION) :
                 null;
     }
 

@@ -1,6 +1,8 @@
 package com.banchan.model.entity;
 
 import com.banchan.model.domain.question.AnswerType;
+import com.banchan.model.domain.question.QuestionType;
+import com.banchan.model.domain.question.QuestionTypeAttributeConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +25,10 @@ public class Questions {
 
     @Column(name = "random_order")
     private Integer randomOrder;
+
+    @Column(name = "type")
+    @Convert(converter = QuestionTypeAttributeConverter.class)
+    private QuestionType type;
 
     @Column(name = "decision")
     private AnswerType decision;

@@ -47,6 +47,7 @@ public class QuestionsService {
                         .userId(questionCard.getUserId())
                         .randomOrder(new Random().nextInt(Integer.MAX_VALUE))
                         .writeTime(LocalDateTime.now())
+                        .type(questionCard.getType())
                         .reportState(0)
                         .build());
 
@@ -152,6 +153,7 @@ public class QuestionsService {
                         .username(Optional.ofNullable(usernameMap.get(question.getUserId())).orElse("살려줘 제발"))
                         .order(question.getRandomOrder())
                         .userId(question.getUserId())
+                        .type(question.getType())
                         .detail(detailMap.get(question.getId()))
                         .vote(voteCountMap.get(question.getId()))
                         .review(Optional.ofNullable(reviewCountMap.get(question.getId())).orElse(0L))
