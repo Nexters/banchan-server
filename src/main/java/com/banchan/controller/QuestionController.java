@@ -3,10 +3,11 @@ package com.banchan.controller;
 import com.banchan.config.annotation.BanchanAuth;
 import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
-import com.banchan.model.dto.reviews.ReviewReportRequestDto;
+import com.banchan.model.entity.QuestionCardData;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
+import com.banchan.repository.QuestionCardDataRepository;
 import com.banchan.service.question.QuestionsService;
 import com.banchan.service.question.VotesService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -25,6 +26,13 @@ public class QuestionController {
 
     @Autowired VotesService votesService;
     @Autowired QuestionsService questionsService;
+    @Autowired
+    QuestionCardDataRepository questionsRepository;
+
+    @GetMapping(value = "test")
+    public List<QuestionCardData> test(){
+        return questionsRepository.findNotVotedQuestions();
+    }
 
     @ApiOperation(value = "투표 등록",
             notes = "answer: A or B - 무엇에 투표를 하였는지 / " +

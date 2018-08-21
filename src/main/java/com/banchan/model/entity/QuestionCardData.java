@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "questions")
 @Builder
-public class Questions {
+public class QuestionCardData{
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -42,7 +42,24 @@ public class Questions {
     @Column(name = "report_state")
     private Integer reportState;
 
-    public void report() {
-        this.reportState = 1;
-    }
+    @Column(name = "prefix")
+    private String prefix;
+
+    @Column(name = "postfix")
+    private String postfix;
+
+    @Column(name = "reviews")
+    private Long reviews;
+
+    @Column(name = "a")
+    private Long countA;
+
+    @Column(name = "b")
+    private Long countB;
+
+    @Column(name = "detail_type")
+    private String detailType;
+
+    @Column(name = "detail_content")
+    private String detailContent;
 }
