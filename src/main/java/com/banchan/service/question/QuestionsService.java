@@ -160,6 +160,7 @@ public class QuestionsService {
                         .order(question.getRandomOrder())
                         .userId(question.getUserId())
                         .type(question.getType())
+                        .decision(question.getDecision())
                         .detail(detailMap.get(question.getId()))
                         .vote(voteCountMap.get(question.getId()))
                         .review(Optional.ofNullable(reviewCountMap.get(question.getId())).orElse(0L))
