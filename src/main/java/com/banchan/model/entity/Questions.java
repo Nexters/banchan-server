@@ -1,6 +1,7 @@
 package com.banchan.model.entity;
 
 import com.banchan.model.domain.question.AnswerType;
+import com.banchan.model.domain.question.AnswerTypeAttributeConverter;
 import com.banchan.model.domain.question.QuestionType;
 import com.banchan.model.domain.question.QuestionTypeAttributeConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,6 +32,7 @@ public class Questions {
     private QuestionType type;
 
     @Column(name = "decision")
+    @Convert(converter = AnswerTypeAttributeConverter.class)
     private AnswerType decision;
 
     @JsonIgnore

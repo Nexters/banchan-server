@@ -1,5 +1,6 @@
 package com.banchan.model.vo;
 
+import com.banchan.model.domain.question.AnswerType;
 import com.banchan.model.domain.question.DetailType;
 import com.banchan.model.domain.question.QuestionType;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,6 +28,9 @@ public class QuestionCard {
 
     @NotNull
     private QuestionType type;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private AnswerType decision;
 
     @NotNull
     private Long userId;
