@@ -86,6 +86,12 @@ public class QuestionsService {
         return result;
     }
 
+    public QuestionCard findQuestionCardByQuestionId(Long questionId){
+        return findQuestionCardByQuestions(Arrays.asList(
+                new Questions[]{this.questionsRepository.findById(questionId).get()}))
+                .get(0);
+    }
+
     private List<QuestionCard> findQuestionCardByQuestions(List<Questions> questions){
         if(questions == null || questions.size() == 0) throw new QuestionException("QuestionNotFound");
 

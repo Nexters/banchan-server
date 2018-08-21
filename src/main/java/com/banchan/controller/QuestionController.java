@@ -3,7 +3,6 @@ package com.banchan.controller;
 import com.banchan.config.annotation.BanchanAuth;
 import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
-import com.banchan.model.dto.reviews.ReviewReportRequestDto;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
@@ -57,6 +56,16 @@ public class QuestionController {
 
         return CommonResponse.success(questionsService.add(questionCard));
     }
+
+    @ApiOperation(value = "질문 조회",
+            notes = "질문 ID로 하나의 질문을 조회"
+    )
+    @BanchanAuth
+    @RequestMapping(value = "questionCard/{questionId}", method = RequestMethod.GET)
+    public CommonResponse<QuestionCard> findQuestionCard(@PathVariable("questionId") Long questionId){
+        return CommonResponse.success(questionsService.findQuestionCardByQuestionId(questionId));
+    }
+
 
     @ApiOperation(value = "투표 안 한 질문 조회",
             notes = "마지막 조회한 질문의 order 를 보고 다음 질문을 조회 / " +
