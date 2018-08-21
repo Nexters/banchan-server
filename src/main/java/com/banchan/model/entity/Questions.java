@@ -18,27 +18,27 @@ public class Questions {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @Column(name = "user_id")
-    private Long userId;
+    protected Long userId;
 
     @Column(name = "random_order")
-    private Integer randomOrder;
+    protected Integer randomOrder;
 
     @Column(name = "type")
     @Convert(converter = QuestionTypeAttributeConverter.class)
-    private QuestionType type;
+    protected QuestionType type;
 
     @Column(name = "decision")
-    private AnswerType decision;
+    protected AnswerType decision;
 
     @JsonIgnore
     @Column(name = "write_time")
-    private LocalDateTime writeTime;
+    protected LocalDateTime writeTime;
 
     @Column(name = "report_state")
-    private Integer reportState;
+    protected Integer reportState;
 
     public void report() {
         this.reportState = 1;
