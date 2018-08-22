@@ -9,7 +9,7 @@ import lombok.Setter;
 public class QuestionReportRequestDto {
 
     private Long userId;
-    private Integer questionId;
+    private Long questionId;
 
     public Reports toQuestionReportEntity() {
         return Reports.builder()

@@ -193,8 +193,8 @@ public class QuestionsService {
      */
     final static int REPORT_MAX_SIZE = 10;
     @Transactional
-    public Integer saveReport(QuestionReportRequestDto dto) {
-        Integer reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
+    public Long saveReport(QuestionReportRequestDto dto) {
+        Long reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
         if (reportsRepository.countByQuestionId(dto.getQuestionId()) >= REPORT_MAX_SIZE) {
             Questions question = questionsRepository.findById(Long.valueOf(dto.getQuestionId())).get();
             question.report();

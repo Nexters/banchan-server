@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-public interface ReviewsRepository extends JpaRepository<Reviews, Integer> {
+public interface ReviewsRepository extends JpaRepository<Reviews, Long> {
     @Query(value = "SELECT * FROM reviews " +
             "WHERE " +
             "question_id = :questionId " +
@@ -21,7 +21,7 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Integer> {
     nativeQuery = true)
     Stream<Reviews> findReviews(
             @Param("questionId") Long questionId,
-            @Param("lastReviewId") Integer lastReviewId,
+            @Param("lastReviewId") Long lastReviewId,
             @Param("REVIEWS_SIZE") int REVIEWS_SIZE);
 
     @Query("SELECT NEW com.banchan.model.dto.ReviewCountData(r.questionId, COUNT(r)) FROM Reviews r WHERE r.questionId IN (:questionIds) GROUP BY r.questionId")
