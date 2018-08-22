@@ -1,5 +1,6 @@
 package com.banchan.service.question;
 
+import com.banchan.model.domain.question.AnswerType;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
 import com.banchan.model.entity.QuestionCardData;
 import com.banchan.model.entity.Questions;
@@ -30,6 +31,7 @@ public class QuestionsService {
     @Autowired private ImageUploader imageUploader;
     @Autowired private QuestionDetailsService questionDetailsService;
     @Autowired private QuestionCardDataRepository questionCardDataRepository;
+    @Autowired private Rewarder rewarder;
 
     @Transactional
     public Questions add(QuestionCard questionCard){
@@ -74,13 +76,17 @@ public class QuestionsService {
         return this.toQuestionCards(
                 questionCardDataRepository.findUserMadeQuestions(userId, start, count)).stream()
                 .sorted((card1, card2) -> {
+                    if((card1.getDecision() == AnswerType.UNDECIDED && card2.getDecision() == AnswerType.UNDECIDED)
+                            || (card1.getDecision() != AnswerType.UNDECIDED && card2.getDecision() != AnswerType.UNDECIDED))
+                        return (int)(card2.getId() - card1.getId());
 
-                });
+                    return card1.getDecision() == AnswerType.UNDECIDED ? -1 : 1;
+                }).collect(Collectors.toList());
     }
 
     public List<QuestionCard> findVotedQuestionCard(Long userId, int start, int count){
         return this.toQuestionCards(
-                questionCardDataRepository.findVotedQuestions(userId, start, count));
+                questionCardDataRepository.findVotedQuestions(userId, start, count)); // 정렬 이슈
     }
 
     private List<QuestionCard> toQuestionCards(List<QuestionCardData> questionCardDataList){
@@ -100,11 +106,17 @@ public class QuestionsService {
                         .username(Optional.ofNullable(key.getPrefix()).orElse("맛있는")
                                 + " " + Optional.ofNullable(key.getPostfix()).orElse("반찬"))
                         .type(key.getType())
+                        .decision(key.getDecision())
                         .userId(key.getUserId())
                         .review(key.getReviews())
                         .writeTime(key.getWriteTime())
                         .detail(detail)
                         .vote(new VoteCount(key.getCountA(), key.getCountB()))
+                        .tag(QuestionCard.Tag.builder()
+                                .NEW(rewarder.checkNew(key.getWriteTime()))
+                                .FIRST(rewarder.checkFirst(key.getCountA() + key.getCountB()))
+                                .RANDOM(rewarder.checkRandom())
+                                .build())
                         .build())
                 .collect(Collectors.toList());
     }

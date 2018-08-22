@@ -1,5 +1,6 @@
 package com.banchan.model.vo;
 
+import com.banchan.model.domain.question.AnswerType;
 import com.banchan.model.domain.question.DetailType;
 import com.banchan.model.domain.question.QuestionType;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +26,9 @@ public class QuestionCard {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String username;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private AnswerType decision;
+
     @NotNull
     private QuestionType type;
 
@@ -42,6 +46,9 @@ public class QuestionCard {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long review;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Tag tag;
 
 
     // Swagger 를 위한 getter
@@ -71,7 +78,25 @@ public class QuestionCard {
     }
 
     @ApiModelProperty(hidden = true)
-    public Long getreview() {
+    public Long getReview() {
         return review;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public AnswerType getDecision() {
+        return decision;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public Tag getTag() {
+        return tag;
+    }
+
+    @Data
+    @Builder
+    public static class Tag{
+        private boolean NEW;
+        private boolean FIRST;
+        private boolean RANDOM;
     }
 }

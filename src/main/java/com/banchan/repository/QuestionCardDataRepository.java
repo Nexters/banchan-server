@@ -81,7 +81,7 @@ public interface QuestionCardDataRepository extends JpaRepository<QuestionCardDa
                     "    SELECT * " +
                     "    FROM questions " +
                     "    WHERE user_id = :userId AND report_state = 0 " +
-                    "    ORDER BY decision ASC, id DESC " +
+                    "    ORDER BY decision IS NULL DESC, id DESC " +
                     "    LIMIT :start, :counting) q " +
                     "  LEFT JOIN votes v " +
                     "    ON q.id = v.question_id " +

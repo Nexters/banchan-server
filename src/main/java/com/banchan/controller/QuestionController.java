@@ -1,14 +1,13 @@
 package com.banchan.controller;
 
 import com.banchan.config.annotation.BanchanAuth;
-import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
 import com.banchan.model.entity.Questions;
+import com.banchan.model.entity.Vote;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
-import com.banchan.repository.QuestionCardDataRepository;
 import com.banchan.service.question.QuestionsService;
-import com.banchan.service.question.VotesService;
+import com.banchan.service.question.VoteService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -23,10 +22,8 @@ import java.util.List;
 @RequestMapping("api")
 public class QuestionController {
 
-    @Autowired VotesService votesService;
+    @Autowired VoteService voteService;
     @Autowired QuestionsService questionsService;
-    @Autowired
-    QuestionCardDataRepository questionsRepository;
 
     @ApiOperation(value = "투표 등록",
             notes = "answer: A or B - 무엇에 투표를 하였는지 / " +
@@ -40,7 +37,7 @@ public class QuestionController {
     @BanchanAuth
     @RequestMapping(value = "vote", method = RequestMethod.POST)
     public CommonResponse<Double> addVote(@RequestBody Vote vote){
-        return CommonResponse.success(votesService.add(vote));
+        return CommonResponse.success(voteService.add(vote));
     }
 
     @ApiOperation(value = "질문 등록",
