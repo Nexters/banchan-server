@@ -1,5 +1,8 @@
 package com.banchan.model.entity;
 
+import com.banchan.model.domain.question.AnswerType;
+import com.banchan.model.domain.question.AnswerTypeAttributeConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,12 +11,13 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "votes_a")
 @Builder
-public class VotesA {
+@Table(name = "votes")
+public class Vote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     @Column(name = "user_id")
@@ -22,6 +26,14 @@ public class VotesA {
     @Column(name = "question_id")
     private Long questionId;
 
+    @Column(name = "answer")
+    @Convert(converter = AnswerTypeAttributeConverter.class)
+    private AnswerType answer;
+
+    @JsonIgnore
     @Column(name = "vote_time")
     private LocalDateTime voteTime;
+
+    @Transient
+    private boolean random;
 }

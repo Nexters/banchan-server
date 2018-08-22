@@ -1,13 +1,13 @@
 package com.banchan.controller;
 
 import com.banchan.config.annotation.BanchanAuth;
-import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
 import com.banchan.model.entity.Questions;
+import com.banchan.model.entity.Vote;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.service.question.QuestionsService;
-import com.banchan.service.question.VotesService;
+import com.banchan.service.question.VoteService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("api")
 public class QuestionController {
 
-    @Autowired VotesService votesService;
+    @Autowired VoteService voteService;
     @Autowired QuestionsService questionsService;
 
     @ApiOperation(value = "투표 등록",
@@ -37,7 +37,7 @@ public class QuestionController {
     @BanchanAuth
     @RequestMapping(value = "vote", method = RequestMethod.POST)
     public CommonResponse<Double> addVote(@RequestBody Vote vote){
-        return CommonResponse.success(votesService.add(vote));
+        return CommonResponse.success(voteService.add(vote));
     }
 
     @ApiOperation(value = "질문 등록",
@@ -61,12 +61,11 @@ public class QuestionController {
             notes = "질문 ID로 하나의 질문을 조회"
     )
     @BanchanAuth
-    @RequestMapping(value = "questionCard/{questionId}", method = RequestMethod.GET)
+    @GetMapping(value = "questionCard/{questionId}")
     public CommonResponse<QuestionCard> findQuestionCard(@PathVariable("questionId") Long questionId){
-        return CommonResponse.success(questionsService.findQuestionCardByQuestionId(questionId));
+        return CommonResponse.success(questionsService.findQuestionCard(questionId));
     }
-
-
+  
     @ApiOperation(value = "투표 안 한 질문 조회",
             notes = "마지막 조회한 질문의 order 를 보고 다음 질문을 조회 / " +
                     "사용자가 투표하지 않고 작성하지 않았으며 신고 받아 삭제되지 않은 질문을 조회"
@@ -79,8 +78,8 @@ public class QuestionController {
     @BanchanAuth
     @RequestMapping(value = "user/{userId}/notVotedQuestions/{lastOrder}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> findNotVotedQuestions(
-            @PathVariable("userId") int userId, @PathVariable("lastOrder") int lastOrder, @PathVariable("count") int count) {
-        return CommonResponse.success(questionsService.findNotVotedQuestionCard(userId, lastOrder - 1, count));
+            @PathVariable("userId") Long userId, @PathVariable("lastOrder") int lastOrder, @PathVariable("count") int count) {
+        return CommonResponse.success(questionsService.findNotVotedQuestionCard(userId, lastOrder, count));
     }
 
     @ApiOperation(value = "사용자가 만든 질문 조회",
@@ -95,7 +94,7 @@ public class QuestionController {
     @BanchanAuth
     @RequestMapping(value = "user/{userId}/userMadeQuestions/{page}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> userMadeQuestions(
-            @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
+            @PathVariable("userId") Long userId, @PathVariable("page") int page, @PathVariable("count") int count) {
         return CommonResponse.success(questionsService.findUserMadeQuestionCard(userId, page, count));
     }
 
@@ -111,7 +110,7 @@ public class QuestionController {
     @BanchanAuth
     @RequestMapping(value = "user/{userId}/votedQuestions/{page}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> findVotedQuestions(
-            @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
+            @PathVariable("userId") Long userId, @PathVariable("page") int page, @PathVariable("count") int count) {
         return CommonResponse.success(questionsService.findVotedQuestionCard(userId, page, count));
     }
 
