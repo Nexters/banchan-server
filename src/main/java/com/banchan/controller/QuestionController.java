@@ -3,7 +3,6 @@ package com.banchan.controller;
 import com.banchan.config.annotation.BanchanAuth;
 import com.banchan.model.dto.Vote;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
-import com.banchan.model.entity.QuestionCardData;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.response.CommonResponse;
 import com.banchan.model.vo.QuestionCard;
@@ -30,8 +29,8 @@ public class QuestionController {
     QuestionCardDataRepository questionsRepository;
 
     @GetMapping(value = "test")
-    public List<QuestionCardData> test(){
-        return questionsRepository.findNotVotedQuestions();
+    public List<QuestionCard> test(){
+        return questionsService.findNotVotedQuestionCard2();
     }
 
     @ApiOperation(value = "투표 등록",

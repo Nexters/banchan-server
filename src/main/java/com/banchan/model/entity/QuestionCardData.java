@@ -1,9 +1,6 @@
 package com.banchan.model.entity;
 
-import com.banchan.model.domain.question.AnswerType;
-import com.banchan.model.domain.question.AnswerTypeAttributeConverter;
-import com.banchan.model.domain.question.QuestionType;
-import com.banchan.model.domain.question.QuestionTypeAttributeConverter;
+import com.banchan.model.domain.question.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
@@ -58,7 +55,8 @@ public class QuestionCardData{
     private Long countB;
 
     @Column(name = "detail_type")
-    private String detailType;
+    @Convert(converter = DetailTypeAttributeConverter.class)
+    private DetailType detailType;
 
     @Column(name = "detail_content")
     private String detailContent;

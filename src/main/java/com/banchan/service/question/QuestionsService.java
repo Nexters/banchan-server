@@ -2,12 +2,14 @@ package com.banchan.service.question;
 
 import com.banchan.model.domain.question.DetailType;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
+import com.banchan.model.entity.QuestionCardData;
 import com.banchan.model.entity.Questions;
 import com.banchan.model.entity.User;
 import com.banchan.model.entity.Username;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.model.vo.VoteCount;
+import com.banchan.repository.QuestionCardDataRepository;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.repository.ReportsRepository;
 import com.banchan.repository.UserRepository;
@@ -36,6 +38,8 @@ public class QuestionsService {
 
     @Autowired private ReviewsService reviewsService;
     @Autowired private UserRepository userRepository;
+
+    @Autowired private QuestionCardDataRepository questionCardDataRepository;
 
     @Transactional
     public Questions add(QuestionCard questionCard){
@@ -138,6 +142,34 @@ public class QuestionsService {
 
         } catch (InterruptedException e) { throw new RuntimeException(e);
         } catch (ExecutionException e) { throw new RuntimeException(e); }
+    }
+
+    public List<QuestionCard> findNotVotedQuestionCard2(){
+        return this.toQuestionCards(questionCardDataRepository.findNotVotedQuestions());
+    }
+
+    private List<QuestionCard> toQuestionCards(List<QuestionCardData> questionCardDataList){
+        return EntryStream.of(questionCardDataList.stream()
+                .collect(Collectors.groupingBy(QuestionCardData::getId)))
+                .mapToKey((id, questionCardDataList1) -> questionCardDataList1.get(0))
+                .mapValues(questionCardDataList1 -> questionCardDataList1.stream()
+                        .peek(System.out::println)
+                        .collect(Collectors
+                                .toMap(QuestionCardData::getDetailType,
+                                        QuestionCardData::getDetailContent)))
+                .mapKeyValue((key, detail) -> QuestionCard.builder()
+                        .id(key.getId())
+                        .order(key.getRandomOrder())
+                        .username(Optional.of(key.getPrefix()).orElse("맛있는")
+                                + " " + Optional.of(key.getPostfix()).orElse("반찬"))
+                        .type(key.getType())
+                        .userId(key.getUserId())
+                        .review(key.getReviews())
+                        .writeTime(key.getWriteTime())
+                        .detail(detail)
+                        .vote(new VoteCount(key.getCountA(), key.getCountB()))
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private List<QuestionCard> toQuestionCards(
