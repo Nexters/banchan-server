@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import sun.rmi.runtime.Log;
 
 import java.util.List;
 import java.util.Optional;
@@ -155,29 +156,32 @@ public class ReviewsServiceTest {
         reviewsRepository.delete(testReviews5);
     }
 
-//    @Test
-//    public void 댓글이_신고가_되는지_봅시다아() {
-//        //given
-//        User dummyUser = userRepository.findById(테스트에사용할유저_ID).get();
-//        Reviews testReviews6 = reviewsRepository.save(Reviews.builder()
-//                .questionId(테스트에사용할질문_ID)
-//                .content("에라이 #$&*#(@*$#%&#(@#%@(&(신고당할 content)")
-//                .deleteState(0)
-//                .reportState(0)
-//                .user(dummyUser)
-//                .build());
-//
-//        ReviewReportRequestDto dto = ReviewReportRequestDto.builder()
-//                .reviewId(testReviews6.getId())
-//                .userId(테스트에사용할유저_ID)
-//                .build();
-//
-//        //when
-//        reviewsService.saveReport(dto);
-//
-//        //then
-//        System.out.println("***&&&&&&&&&&&&&&&&" + reportsRepository.findById(Long.valueOf(868768)));
-//        assertThat(reportsRepository.findById(testReviews6.getId())).isNotEqualTo(Optional.empty());
-//    }
+    @Test
+    public void 댓글이_신고가_되는지_봅시다아() {
+        //given
+        User dummyUser = userRepository.findById(테스트에사용할유저_ID).get();
+        Reviews testReviews6 = reviewsRepository.save(Reviews.builder()
+                .questionId(테스트에사용할질문_ID)
+                .content("에라이 #$&*#(@*$#%&#(@#%@(&(신고당할 content)")
+                .deleteState(0)
+                .reportState(0)
+                .user(dummyUser)
+                .build());
+
+        ReviewReportRequestDto dto = ReviewReportRequestDto.builder()
+                .reviewId(testReviews6.getId())
+                .userId(테스트에사용할유저_ID)
+                .build();
+
+        //when
+        Long savedReportId = reviewsService.saveReport(dto);
+
+        //then
+        assertThat(reportsRepository.findById(savedReportId)).isNotEqualTo(Optional.empty());
+
+        //테스트 종료 후 삭제
+        reportsRepository.deleteById(savedReportId);
+        reviewsRepository.delete(testReviews6);
+    }
 }
 
