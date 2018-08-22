@@ -28,21 +28,6 @@ public class QuestionController {
     @Autowired
     QuestionCardDataRepository questionsRepository;
 
-    @GetMapping(value = "test")
-    public List<QuestionCard> test(){
-        return questionsService.findNotVotedQuestionCard2();
-    }
-
-    @GetMapping(value = "test2")
-    public List<QuestionCard> test2(){
-        return questionsService.findVotedQuestionCard2();
-    }
-
-    @GetMapping(value = "test3")
-    public List<QuestionCard> test3(){
-        return questionsService.findUserMadeQuestionCard2();
-    }
-
     @ApiOperation(value = "투표 등록",
             notes = "answer: A or B - 무엇에 투표를 하였는지 / " +
                     "questionId - 어떤 질문에 투표를 하였는지 / " +
@@ -75,6 +60,15 @@ public class QuestionController {
         return CommonResponse.success(questionsService.add(questionCard));
     }
 
+    @ApiOperation(value = "질문 조회",
+            notes = "질문 ID로 하나의 질문을 조회"
+    )
+    @BanchanAuth
+    @GetMapping(value = "questionCard/{questionId}")
+    public CommonResponse<QuestionCard> findQuestionCard(@PathVariable("questionId") Long questionId){
+        return CommonResponse.success(questionsService.findQuestionCard(questionId));
+    }
+
     @ApiOperation(value = "투표 안 한 질문 조회",
             notes = "마지막 조회한 질문의 order 를 보고 다음 질문을 조회 / " +
                     "사용자가 투표하지 않고 작성하지 않았으며 신고 받아 삭제되지 않은 질문을 조회"
@@ -87,8 +81,8 @@ public class QuestionController {
     @BanchanAuth
     @RequestMapping(value = "user/{userId}/notVotedQuestions/{lastOrder}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> findNotVotedQuestions(
-            @PathVariable("userId") int userId, @PathVariable("lastOrder") int lastOrder, @PathVariable("count") int count) {
-        return CommonResponse.success(questionsService.findNotVotedQuestionCard(userId, lastOrder - 1, count));
+            @PathVariable("userId") Long userId, @PathVariable("lastOrder") int lastOrder, @PathVariable("count") int count) {
+        return CommonResponse.success(questionsService.findNotVotedQuestionCard(userId, lastOrder, count));
     }
 
     @ApiOperation(value = "사용자가 만든 질문 조회",
@@ -103,7 +97,7 @@ public class QuestionController {
     @BanchanAuth
     @RequestMapping(value = "user/{userId}/userMadeQuestions/{page}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> userMadeQuestions(
-            @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
+            @PathVariable("userId") Long userId, @PathVariable("page") int page, @PathVariable("count") int count) {
         return CommonResponse.success(questionsService.findUserMadeQuestionCard(userId, page, count));
     }
 
@@ -119,7 +113,7 @@ public class QuestionController {
     @BanchanAuth
     @RequestMapping(value = "user/{userId}/votedQuestions/{page}/{count}", method = RequestMethod.GET)
     public CommonResponse<List<?>> findVotedQuestions(
-            @PathVariable("userId") int userId, @PathVariable("page") int page, @PathVariable("count") int count) {
+            @PathVariable("userId") Long userId, @PathVariable("page") int page, @PathVariable("count") int count) {
         return CommonResponse.success(questionsService.findVotedQuestionCard(userId, page, count));
     }
 

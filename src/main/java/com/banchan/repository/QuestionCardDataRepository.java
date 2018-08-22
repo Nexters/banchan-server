@@ -91,10 +91,34 @@ public interface QuestionCardDataRepository extends JpaRepository<QuestionCardDa
                     "    ON q.user_id = u.id " +
                     "  GROUP BY q.id) qu " +
                     "LEFT JOIN question_details qd " +
-                    "  ON qu.id = qd.question_id " +
-                    "ORDER BY qu.decision ASC, qu.id DESC",
+                    "  ON qu.id = qd.question_id ",
             nativeQuery = true
     )
     List<QuestionCardData> findUserMadeQuestions(
             @Param("userId") Long userId, @Param("start") int start, @Param("counting") int counting);
+
+    @Query(
+            value = "SELECT qu.*, qd.id detail_id, qd.type detail_type, qd.content detail_content " +
+                    "FROM ( " +
+                    "  SELECT q.*, u.prefix, u.postfix, " +
+                    "    COUNT(DISTINCT r.id) reviews, " +
+                    "    SUM(CASE WHEN answer = 0 THEN 1 ELSE 0 END) a, " +
+                    "    SUM(CASE WHEN answer = 1 THEN 1 ELSE 0 END) b " +
+                    "  FROM ( " +
+                    "    SELECT * " +
+                    "    FROM questions " +
+                    "    WHERE id = :questionId) q " +
+                    "  LEFT JOIN votes v " +
+                    "    ON q.id = v.question_id " +
+                    "  LEFT JOIN reviews r " +
+                    "    ON q.id = r.question_id " +
+                    "  LEFT JOIN usernames u " +
+                    "    ON q.user_id = u.id " +
+                    "  GROUP BY q.id) qu " +
+                    "LEFT JOIN question_details qd " +
+                    "  ON qu.id = qd.question_id ",
+            nativeQuery = true
+    )
+    List<QuestionCardData> findQuestion(
+            @Param("questionId") Long questionId);
 }
