@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ReviewsUpdateRequestDto {
 
-    private Integer reviewId;
+    private Long reviewId;
     private String content;
 }

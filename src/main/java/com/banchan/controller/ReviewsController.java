@@ -38,7 +38,7 @@ public class ReviewsController {
     @BanchanAuth
     @GetMapping("question/{questionId}/last-review/{lastReviewId}")
     public CommonResponse<List<ReviewsResponseDto>> findReviews(@PathVariable("questionId") Long questionId,
-                                                                @PathVariable("lastReviewId") Integer lastReviewId) {
+                                                                @PathVariable("lastReviewId") Long lastReviewId) {
         return CommonResponse.success(reviewsService.findReviews(questionId, lastReviewId));
     }
 
@@ -49,7 +49,7 @@ public class ReviewsController {
     @ApiOperation(value = "댓글 작성", notes = "성공 시 작성한 댓글의 id값 반환")
     @BanchanAuth
     @PostMapping("")
-    public CommonResponse<Integer> saveReview (@RequestBody ReviewsSaveRequestDto dto) {
+    public CommonResponse<Long> saveReview (@RequestBody ReviewsSaveRequestDto dto) {
         return CommonResponse.success(reviewsService.save(dto));
     }
 
@@ -60,7 +60,7 @@ public class ReviewsController {
     @ApiOperation(value = "댓글 수정", notes = "성공 시 수정한 댓글의 id값 반환")
     @BanchanAuth
     @PutMapping("")
-    public CommonResponse<Integer> updateReview (@RequestBody ReviewsUpdateRequestDto dto) {
+    public CommonResponse<Long> updateReview (@RequestBody ReviewsUpdateRequestDto dto) {
         return CommonResponse.success(reviewsService.update(dto));
     }
 
@@ -73,7 +73,7 @@ public class ReviewsController {
             required = true, dataType = "int", paramType = "path", defaultValue = "")
     @BanchanAuth
     @DeleteMapping("{deleteReviewId}")
-    public CommonResponse<Integer> deleteReview (@PathVariable("deleteReviewId") int deleteReviewId) {
+    public CommonResponse<Long> deleteReview (@PathVariable("deleteReviewId") Long deleteReviewId) {
         return CommonResponse.success(reviewsService.delete(deleteReviewId));
     }
 

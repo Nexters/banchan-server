@@ -9,7 +9,7 @@ import lombok.Setter;
 public class ReviewReportRequestDto {
 
     private Long userId;
-    private Integer reviewId;
+    private Long reviewId;
 
     public Reports toReviewReportEntity() {
         return Reports.builder()

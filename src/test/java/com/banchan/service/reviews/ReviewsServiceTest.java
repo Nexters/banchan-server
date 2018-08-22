@@ -40,7 +40,7 @@ public class ReviewsServiceTest {
                 .build();
 
         //when
-        int reviewsId = reviewsService.save(dto);
+        Long reviewsId = reviewsService.save(dto);
 
         //then
         Reviews reviews = reviewsRepository.findById(reviewsId).get();
@@ -52,13 +52,14 @@ public class ReviewsServiceTest {
         reviewsRepository.delete(reviews);
     }
 
-//    @Test
-//    public void 댓글_조회가되는지_테스트해봅시다아() {
-//        //given
-//        Reviews
-//        //when
-//
+    @Test
+    public void 댓글_조회가되는지_테스트해봅시다아() {
+        //given
 
-//    }
+
+        //when
+
+
+    }
 }
 

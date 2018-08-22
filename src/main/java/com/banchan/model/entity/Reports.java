@@ -15,19 +15,19 @@ public class Reports extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "question_id")
-    private Integer questionId;
+    private Long questionId;
 
     @Column(name = "review_id")
-    private Integer reviewId;
+    private Long reviewId;
 
     @Builder
-    public Reports(Long userId, Integer questionId, Integer reviewId) {
+    public Reports(Long userId, Long questionId, Long reviewId) {
         this.userId = userId;
         this.questionId = questionId;
         this.reviewId = reviewId;
