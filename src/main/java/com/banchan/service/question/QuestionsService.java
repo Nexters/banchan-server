@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -33,15 +32,6 @@ public class QuestionsService {
     @Autowired private QuestionDetailsService questionDetailsService;
     @Autowired private QuestionCardDataRepository questionCardDataRepository;
     @Autowired private Rewarder rewarder;
-
-    @Value("${reward.constraint.speaker}")
-    private int constraintFirst;
-
-    @Value("${reward.constraint.new}")
-    private int constraintNew;
-
-    @Value("${reward.constraint.random}")
-    private int constraintRandom;
 
     @Transactional
     public Questions add(QuestionCard questionCard){

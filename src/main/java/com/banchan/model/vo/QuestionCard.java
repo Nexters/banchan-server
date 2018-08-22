@@ -32,9 +32,6 @@ public class QuestionCard {
     @NotNull
     private QuestionType type;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private AnswerType decision;
-
     @NotNull
     private Long userId;
 
