@@ -14,10 +14,12 @@ import com.banchan.repository.UserRepository;
 import com.banchan.service.reviews.ReviewsService;
 import one.util.streamex.EntryStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -36,6 +38,15 @@ public class QuestionsService {
 
     @Autowired private ReviewsService reviewsService;
     @Autowired private UserRepository userRepository;
+
+    @Value("${reward.constraint.speaker}")
+    private int constraintFirst;
+
+    @Value("${reward.constraint.new}")
+    private int constraintNew;
+
+    @Value("${reward.constraint.random}")
+    private int constraintRandom;
 
     @Transactional
     public Questions add(QuestionCard questionCard){
@@ -154,6 +165,8 @@ public class QuestionsService {
             Map<Long, VoteCount> voteCountMap,
             Map<Long, Long> reviewCountMap){
 
+        LocalDateTime now = LocalDateTime.now();
+
         return questions.stream()
                 .map(question -> QuestionCard.builder()
                         .id(question.getId())
@@ -166,6 +179,11 @@ public class QuestionsService {
                         .vote(voteCountMap.get(question.getId()))
                         .review(Optional.ofNullable(reviewCountMap.get(question.getId())).orElse(0L))
                         .writeTime(question.getWriteTime())
+                        .tag(QuestionCard.Tag.builder()
+                                .NEW(!question.getWriteTime().plus(Duration.ofMinutes(this.constraintNew)).isBefore(now))
+                                .FIRST(voteCountMap.get(question.getId()).getTotal() < this.constraintFirst)
+                                .RANDOM(new Random().nextInt(100) < 20 )
+                                .build())
                         .build())
                 .collect(Collectors.toList());
     }

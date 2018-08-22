@@ -47,6 +47,8 @@ public class QuestionCard {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long review;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Tag tag;
 
     // Swagger 를 위한 getter
     @ApiModelProperty(hidden = true)
@@ -77,5 +79,18 @@ public class QuestionCard {
     @ApiModelProperty(hidden = true)
     public Long getreview() {
         return review;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public Tag getTag(){
+        return tag;
+    }
+
+    @Data
+    @Builder
+    public static class Tag{
+        private boolean NEW;
+        private boolean FIRST;
+        private boolean RANDOM;
     }
 }
