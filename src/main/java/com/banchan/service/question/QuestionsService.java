@@ -47,6 +47,7 @@ public class QuestionsService {
                         .userId(questionCard.getUserId())
                         .randomOrder(new Random().nextInt(Integer.MAX_VALUE))
                         .writeTime(LocalDateTime.now())
+                        .decision(questionCard.getDecision())
                         .type(questionCard.getType())
                         .reportState(0)
                         .build());
