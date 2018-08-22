@@ -32,6 +32,9 @@ public class QuestionCard {
     @NotNull
     private QuestionType type;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private AnswerType decision;
+
     @NotNull
     private Long userId;
 
@@ -49,7 +52,7 @@ public class QuestionCard {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Tag tag;
-
+  
 
     // Swagger 를 위한 getter
     @ApiModelProperty(hidden = true)

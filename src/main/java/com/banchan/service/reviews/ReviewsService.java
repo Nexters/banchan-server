@@ -32,29 +32,29 @@ public class ReviewsService {
     // 클라이언트에 1번에 전달해 줄 댓글의 갯수
     final static int REVIEWS_SIZE = 10;
     @Transactional(readOnly = true)
-    public List<ReviewsResponseDto> findReviews(Long questionId, Integer lastReviewId) {
+    public List<ReviewsResponseDto> findReviews(Long questionId, Long lastReviewId) {
         //lastReviewId == 0 => 질문카드 댓글요청 첫 페이지일 경우 lastReviewId에 Integer.MAX_VALUE 대입
-        lastReviewId = (lastReviewId == 0) ? Integer.MAX_VALUE : lastReviewId;
+        lastReviewId = (lastReviewId == 0) ? Long.MAX_VALUE : lastReviewId;
         return reviewsRepository.findReviews(questionId, lastReviewId, REVIEWS_SIZE)
                 .map((x) -> new ReviewsResponseDto(x, voteService.getAnswer(questionId, x)))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public Integer save(ReviewsSaveRequestDto dto) {
+    public Long save(ReviewsSaveRequestDto dto) {
         User user = userRepository.findById(dto.getUserId()).get();
         return reviewsRepository.save(dto.toEntity(user)).getId();
     }
 
     @Transactional
-    public Integer update(ReviewsUpdateRequestDto dto) {
+    public Long update(ReviewsUpdateRequestDto dto) {
         Reviews reviews = reviewsRepository.findById(dto.getReviewId()).get();
         reviews.updateContent(dto.getContent());
         return reviewsRepository.save(reviews).getId();
     }
 
     @Transactional
-    public Integer delete(int deleteReviewId) {
+    public Long delete(Long deleteReviewId) {
         Reviews deleteReview = reviewsRepository.findById(deleteReviewId).get();
         deleteReview.delete();
         return reviewsRepository.save(deleteReview).getId();
@@ -65,8 +65,8 @@ public class ReviewsService {
      */
     final static int REPORT_MAX_SIZE = 10;
     @Transactional
-    public Integer saveReport(ReviewReportRequestDto dto) {
-        Integer reportId = reportsRepository.save(dto.toReviewReportEntity()).getId();
+    public Long saveReport(ReviewReportRequestDto dto) {
+        Long reportId = reportsRepository.save(dto.toReviewReportEntity()).getId();
         if (reportsRepository.countByReviewId(dto.getReviewId()) >= REPORT_MAX_SIZE) {
             Reviews review = reviewsRepository.findById(dto.getReviewId()).get();
             review.report();

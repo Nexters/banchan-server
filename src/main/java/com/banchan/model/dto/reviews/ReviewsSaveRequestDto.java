@@ -2,6 +2,7 @@ package com.banchan.model.dto.reviews;
 
 import com.banchan.model.entity.Reviews;
 import com.banchan.model.entity.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,5 +24,12 @@ public class ReviewsSaveRequestDto {
                 .reportState(0)
                 .deleteState(0)
                 .build();
+    }
+
+    @Builder
+    public ReviewsSaveRequestDto(Long questionId, Long userId, String content) {
+        this.questionId = questionId;
+        this.userId = userId;
+        this.content = content;
     }
 }

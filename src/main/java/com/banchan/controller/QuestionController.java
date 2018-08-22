@@ -65,7 +65,7 @@ public class QuestionController {
     public CommonResponse<QuestionCard> findQuestionCard(@PathVariable("questionId") Long questionId){
         return CommonResponse.success(questionsService.findQuestionCard(questionId));
     }
-
+  
     @ApiOperation(value = "투표 안 한 질문 조회",
             notes = "마지막 조회한 질문의 order 를 보고 다음 질문을 조회 / " +
                     "사용자가 투표하지 않고 작성하지 않았으며 신고 받아 삭제되지 않은 질문을 조회"

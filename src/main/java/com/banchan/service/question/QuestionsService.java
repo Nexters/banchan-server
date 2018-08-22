@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -33,6 +34,15 @@ public class QuestionsService {
     @Autowired private QuestionCardDataRepository questionCardDataRepository;
     @Autowired private Rewarder rewarder;
 
+    @Value("${reward.constraint.speaker}")
+    private int constraintFirst;
+
+    @Value("${reward.constraint.new}")
+    private int constraintNew;
+
+    @Value("${reward.constraint.random}")
+    private int constraintRandom;
+
     @Transactional
     public Questions add(QuestionCard questionCard){
 
@@ -43,6 +53,7 @@ public class QuestionsService {
                         .userId(questionCard.getUserId())
                         .randomOrder(new Random().nextInt(Integer.MAX_VALUE))
                         .writeTime(LocalDateTime.now())
+                        .decision(questionCard.getDecision())
                         .type(questionCard.getType())
                         .reportState(0)
                         .build());
@@ -126,8 +137,8 @@ public class QuestionsService {
      */
     final static int REPORT_MAX_SIZE = 10;
     @Transactional
-    public Integer saveReport(QuestionReportRequestDto dto) {
-        Integer reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
+    public Long saveReport(QuestionReportRequestDto dto) {
+        Long reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
         if (reportsRepository.countByQuestionId(dto.getQuestionId()) >= REPORT_MAX_SIZE) {
             Questions question = questionsRepository.findById(Long.valueOf(dto.getQuestionId())).get();
             question.report();
