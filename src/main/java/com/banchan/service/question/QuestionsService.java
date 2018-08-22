@@ -145,23 +145,36 @@ public class QuestionsService {
     }
 
     public List<QuestionCard> findNotVotedQuestionCard2(){
-        return this.toQuestionCards(questionCardDataRepository.findNotVotedQuestions());
+        return this.toQuestionCards(
+                questionCardDataRepository.findNotVotedQuestions());
+    }
+
+    public List<QuestionCard> findUserMadeQuestionCard2(){
+        return this.toQuestionCards(
+                questionCardDataRepository.findUserMadeQuestions();
+    }
+
+    public List<QuestionCard> findVotedQuestionCard2(){
+        return this.toQuestionCards(
+                questionCardDataRepository.findVotedQuestions();
     }
 
     private List<QuestionCard> toQuestionCards(List<QuestionCardData> questionCardDataList){
+        if(questionCardDataList == null || questionCardDataList.size() == 0)
+            throw new QuestionException("QuestionNotFound");
+
         return EntryStream.of(questionCardDataList.stream()
                 .collect(Collectors.groupingBy(QuestionCardData::getId)))
                 .mapToKey((id, questionCardDataList1) -> questionCardDataList1.get(0))
                 .mapValues(questionCardDataList1 -> questionCardDataList1.stream()
-                        .peek(System.out::println)
                         .collect(Collectors
                                 .toMap(QuestionCardData::getDetailType,
                                         QuestionCardData::getDetailContent)))
                 .mapKeyValue((key, detail) -> QuestionCard.builder()
                         .id(key.getId())
                         .order(key.getRandomOrder())
-                        .username(Optional.of(key.getPrefix()).orElse("맛있는")
-                                + " " + Optional.of(key.getPostfix()).orElse("반찬"))
+                        .username(Optional.ofNullable(key.getPrefix()).orElse("맛있는")
+                                + " " + Optional.ofNullable(key.getPostfix()).orElse("반찬"))
                         .type(key.getType())
                         .userId(key.getUserId())
                         .review(key.getReviews())

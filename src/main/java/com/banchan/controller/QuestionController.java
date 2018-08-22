@@ -33,6 +33,16 @@ public class QuestionController {
         return questionsService.findNotVotedQuestionCard2();
     }
 
+    @GetMapping(value = "test2")
+    public List<QuestionCard> test2(){
+        return questionsService.findVotedQuestionCard2();
+    }
+
+    @GetMapping(value = "test3")
+    public List<QuestionCard> test3(){
+        return questionsService.findUserMadeQuestionCard2();
+    }
+
     @ApiOperation(value = "투표 등록",
             notes = "answer: A or B - 무엇에 투표를 하였는지 / " +
                     "questionId - 어떤 질문에 투표를 하였는지 / " +

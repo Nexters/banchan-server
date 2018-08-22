@@ -14,8 +14,10 @@ import java.time.LocalDateTime;
 public class QuestionCardData{
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long detailId;
+
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "user_id")
