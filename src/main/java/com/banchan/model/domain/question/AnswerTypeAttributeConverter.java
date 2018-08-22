@@ -8,6 +8,7 @@ public class AnswerTypeAttributeConverter implements AttributeConverter<AnswerTy
 
     @Override
     public Boolean convertToDatabaseColumn(AnswerType attribute) {
+        if(attribute == null) return null;
         return attribute.getValue();
     }
 
