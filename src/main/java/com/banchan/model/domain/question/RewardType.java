@@ -13,8 +13,7 @@ public enum RewardType {
 
     private static final Map<String, RewardType> map = Maps.newHashMap();
 
-    @Getter
-    private final String value;
+    @Getter private final String value;
 
     RewardType(String value) {
         this.value = value;

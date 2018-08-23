@@ -1,29 +1,25 @@
 package com.banchan.service.question;
 
-import com.banchan.model.domain.question.DetailType;
+import com.banchan.model.domain.question.AnswerType;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
+import com.banchan.model.entity.QuestionCardData;
 import com.banchan.model.entity.Questions;
-import com.banchan.model.entity.User;
-import com.banchan.model.entity.Username;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.model.vo.VoteCount;
+import com.banchan.repository.QuestionCardDataRepository;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.repository.ReportsRepository;
-import com.banchan.repository.UserRepository;
-import com.banchan.service.reviews.ReviewsService;
 import one.util.streamex.EntryStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,19 +30,8 @@ public class QuestionsService {
 
     @Autowired private ImageUploader imageUploader;
     @Autowired private QuestionDetailsService questionDetailsService;
-    @Autowired private VotesService votesService;
-
-    @Autowired private ReviewsService reviewsService;
-    @Autowired private UserRepository userRepository;
-
-    @Value("${reward.constraint.speaker}")
-    private int constraintFirst;
-
-    @Value("${reward.constraint.new}")
-    private int constraintNew;
-
-    @Value("${reward.constraint.random}")
-    private int constraintRandom;
+    @Autowired private QuestionCardDataRepository questionCardDataRepository;
+    @Autowired private Rewarder rewarder;
 
     @Transactional
     public Questions add(QuestionCard questionCard){
@@ -77,112 +62,61 @@ public class QuestionsService {
         return question;
     }
 
-    public List<QuestionCard> findVotedQuestionCard(long userId, int page, int count){
-        return this.findQuestionCardByQuestions(
-                questionsRepository.findVotedQuestions(userId, PageRequest.of(page, count))
-                        .getContent());
+    public QuestionCard findQuestionCard(Long questionId){
+        return this.toQuestionCards(
+                this.questionCardDataRepository.findQuestion(questionId)).get(0);
     }
 
-    public List<QuestionCard> findUserMadeQuestionCard(long userId, int page, int count){
-        return this.findQuestionCardByQuestions(
-                questionsRepository.findAllByUserIdAndReportStateOrderByDecisionAscIdDesc(userId, 0,  PageRequest.of(page, count))
-                        .getContent());
+    public List<QuestionCard> findNotVotedQuestionCard(Long userId, int lastOrder, int count){
+        if(lastOrder == 0) lastOrder = -1;
+        return this.toQuestionCards(
+                questionCardDataRepository.findNotVotedQuestions(userId, lastOrder, count));
     }
 
-    public List<QuestionCard> findNotVotedQuestionCard(long userId, int lastOrder, int count){
+    public List<QuestionCard> findUserMadeQuestionCard(Long userId, int start, int count){
+        return this.toQuestionCards(
+                questionCardDataRepository.findUserMadeQuestions(userId, start, count)).stream()
+                .sorted((card1, card2) -> {
+                    if((card1.getDecision() == AnswerType.UNDECIDED && card2.getDecision() == AnswerType.UNDECIDED)
+                            || (card1.getDecision() != AnswerType.UNDECIDED && card2.getDecision() != AnswerType.UNDECIDED))
+                        return (int)(card2.getId() - card1.getId());
 
-        List<QuestionCard> result = findQuestionCardByQuestions(
-                questionsRepository.findNotVotedQuestions(userId, lastOrder, count));
-        Collections.shuffle(result);
-
-        return result;
+                    return card1.getDecision() == AnswerType.UNDECIDED ? -1 : 1;
+                }).collect(Collectors.toList());
     }
 
-    public QuestionCard findQuestionCardByQuestionId(Long questionId){
-        return findQuestionCardByQuestions(Arrays.asList(
-                new Questions[]{this.questionsRepository.findById(questionId).get()}))
-                .get(0);
+    public List<QuestionCard> findVotedQuestionCard(Long userId, int start, int count){
+        return this.toQuestionCards(
+                questionCardDataRepository.findVotedQuestions(userId, start, count)); // 정렬 이슈
     }
 
-    private List<QuestionCard> findQuestionCardByQuestions(List<Questions> questions){
-        if(questions == null || questions.size() == 0) throw new QuestionException("QuestionNotFound");
+    private List<QuestionCard> toQuestionCards(List<QuestionCardData> questionCardDataList){
+        if(questionCardDataList == null || questionCardDataList.size() == 0)
+            throw new QuestionException("QuestionNotFound");
 
-        List<Long> questionIds = questions.stream().map(Questions::getId).collect(Collectors.toList());
-        List<Long> userIds = questions.stream().map(Questions::getUserId).collect(Collectors.toList());
-
-        Username testName = new Username(1L, "슬픈", "개발자", null, null);
-
-        User test = new User(1L,
-                "TEST",
-                20,
-                "Y",
-                "F",
-                null,
-                null,
-                testName);
-
-        try {
-
-            CompletableFuture<Map<Long, String>> cfUsernameMap = CompletableFuture
-                    .supplyAsync(() -> Optional.ofNullable(userRepository.findByIdIn(userIds))
-                            .orElse(Arrays.asList(new User[] {test}))
-                            .stream()
-                            .collect(Collectors.toMap(
-                                    User::getId,
-                                    user -> Optional.ofNullable(user.getUsername())
-                                            .orElse(testName).getPrefix() + " " +
-                                            Optional.ofNullable(user.getUsername())
-                                                    .orElse(testName).getPostfix()
-                            )));
-
-            CompletableFuture<Map<Long, Map<DetailType, String>>> cfDetailMap =
-                    questionDetailsService.findQuestionDetails(questionIds);
-
-            CompletableFuture<Map<Long, VoteCount>> cfVoteCountMap =
-                    votesService.findVoteCount(questionIds);
-
-            CompletableFuture<Map<Long, Long>> cfReviewCountMap =
-                    reviewsService.findReviewCount(questionIds);
-
-            return CompletableFuture.allOf(cfUsernameMap, cfDetailMap, cfVoteCountMap, cfReviewCountMap)
-                    .thenApply(ignoredVoid ->
-                            this.toQuestionCards(
-                                    questions,
-                                    cfUsernameMap.join(),
-                                    cfDetailMap.join(),
-                                    cfVoteCountMap.join(),
-                                    cfReviewCountMap.join()))
-                    .get();
-
-        } catch (InterruptedException e) { throw new RuntimeException(e);
-        } catch (ExecutionException e) { throw new RuntimeException(e); }
-    }
-
-    private List<QuestionCard> toQuestionCards(
-            List<Questions> questions,
-            Map<Long, String> usernameMap,
-            Map<Long, Map<DetailType, String>> detailMap,
-            Map<Long, VoteCount> voteCountMap,
-            Map<Long, Long> reviewCountMap){
-
-        LocalDateTime now = LocalDateTime.now();
-
-        return questions.stream()
-                .map(question -> QuestionCard.builder()
-                        .id(question.getId())
-                        .username(Optional.ofNullable(usernameMap.get(question.getUserId())).orElse("살려줘 제발"))
-                        .order(question.getRandomOrder())
-                        .userId(question.getUserId())
-                        .type(question.getType())
-                        .decision(question.getDecision())
-                        .detail(detailMap.get(question.getId()))
-                        .vote(voteCountMap.get(question.getId()))
-                        .review(Optional.ofNullable(reviewCountMap.get(question.getId())).orElse(0L))
-                        .writeTime(question.getWriteTime())
+        return EntryStream.of(questionCardDataList.stream()
+                .collect(Collectors.groupingBy(QuestionCardData::getId)))
+                .mapToKey((id, questionCardDataList1) -> questionCardDataList1.get(0))
+                .mapValues(questionCardDataList1 -> questionCardDataList1.stream()
+                        .collect(Collectors
+                                .toMap(QuestionCardData::getDetailType,
+                                        QuestionCardData::getDetailContent)))
+                .mapKeyValue((key, detail) -> QuestionCard.builder()
+                        .id(key.getId())
+                        .order(key.getRandomOrder())
+                        .username(Optional.ofNullable(key.getPrefix()).orElse("맛있는")
+                                + " " + Optional.ofNullable(key.getPostfix()).orElse("반찬"))
+                        .type(key.getType())
+                        .decision(key.getDecision())
+                        .userId(key.getUserId())
+                        .review(key.getReviews())
+                        .writeTime(key.getWriteTime())
+                        .detail(detail)
+                        .vote(new VoteCount(key.getCountA(), key.getCountB()))
                         .tag(QuestionCard.Tag.builder()
-                                .NEW(!question.getWriteTime().plus(Duration.ofMinutes(this.constraintNew)).isBefore(now))
-                                .FIRST(voteCountMap.get(question.getId()).getTotal() < this.constraintFirst)
-                                .RANDOM(new Random().nextInt(100) < 20 )
+                                .NEW(rewarder.checkNew(key.getWriteTime()))
+                                .FIRST(rewarder.checkFirst(key.getCountA() + key.getCountB()))
+                                .RANDOM(rewarder.checkRandom())
                                 .build())
                         .build())
                 .collect(Collectors.toList());
@@ -193,8 +127,8 @@ public class QuestionsService {
      */
     final static int REPORT_MAX_SIZE = 10;
     @Transactional
-    public Integer saveReport(QuestionReportRequestDto dto) {
-        Integer reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
+    public Long saveReport(QuestionReportRequestDto dto) {
+        Long reportId = reportsRepository.save(dto.toQuestionReportEntity()).getId();
         if (reportsRepository.countByQuestionId(dto.getQuestionId()) >= REPORT_MAX_SIZE) {
             Questions question = questionsRepository.findById(Long.valueOf(dto.getQuestionId())).get();
             question.report();

@@ -12,7 +12,7 @@ import java.util.Optional;
 @Getter
 public class ReviewsResponseDto {
 
-    private Integer id;
+    private Long id;
     private Long questionId;
     private String userName;
     private String content;
