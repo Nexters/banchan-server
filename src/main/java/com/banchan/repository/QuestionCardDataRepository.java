@@ -49,12 +49,12 @@ public interface QuestionCardDataRepository extends JpaRepository<QuestionCardDa
                     "    SUM(CASE WHEN answer = 0 THEN 1 ELSE 0 END) a, " +
                     "    SUM(CASE WHEN answer = 1 THEN 1 ELSE 0 END) b " +
                     "  FROM ( " +
-                    "    SELECT q.* " +
+                    "    SELECT q.*, v.vote_time " +
                     "    FROM questions q " +
                     "    JOIN (SELECT question_id, vote_time FROM votes WHERE user_id = :userId) v " +
                     "      ON q.id = v.question_id " +
                     "    WHERE report_state = 0 " +
-                    "    ORDER BY v.vote_time DESC" +
+                    "    ORDER BY v.vote_time DESC " +
                     "    LIMIT :start, :counting) q " +
                     "  LEFT JOIN votes v " +
                     "    ON q.id = v.question_id " +
@@ -64,7 +64,8 @@ public interface QuestionCardDataRepository extends JpaRepository<QuestionCardDa
                     "    ON q.user_id = u.id " +
                     "  GROUP BY q.id) qu " +
                     "LEFT JOIN question_details qd " +
-                    "  ON qu.id = qd.question_id",
+                    "  ON qu.id = qd.question_id " +
+                    "ORDER BY qu.vote_time DESC " ,
             nativeQuery = true
     )
     List<QuestionCardData> findVotedQuestions(
@@ -91,7 +92,8 @@ public interface QuestionCardDataRepository extends JpaRepository<QuestionCardDa
                     "    ON q.user_id = u.id " +
                     "  GROUP BY q.id) qu " +
                     "LEFT JOIN question_details qd " +
-                    "  ON qu.id = qd.question_id ",
+                    "  ON qu.id = qd.question_id " +
+                    "ORDER BY qu.decision IS NULL DESC, qu.id DESC ",
             nativeQuery = true
     )
     List<QuestionCardData> findUserMadeQuestions(
