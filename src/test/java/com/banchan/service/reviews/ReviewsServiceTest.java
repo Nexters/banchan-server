@@ -27,8 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class ReviewsServiceTest {
 
-    static final Long 테스트에사용할유저_ID = Long.valueOf(26);
-    static final Long 테스트에사용할질문_ID = Long.valueOf(51);
+    static final Long 테스트에사용할유저_ID = Long.valueOf(65);
+    static final Long 테스트에사용할질문_ID = Long.valueOf(150);
 
     @Autowired
     private ReviewsService reviewsService;

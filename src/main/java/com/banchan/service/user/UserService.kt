@@ -8,6 +8,7 @@ import com.banchan.repository.NameWordsRepository
 import com.banchan.repository.UserAuthInfoRepository
 import com.banchan.repository.UserRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import javax.transaction.Transactional
 
 @Service
@@ -19,8 +20,12 @@ open class UserService (
 
     @Transactional
     open fun save(userReq: User) : User {
+        val now :LocalDateTime = LocalDateTime.now();
+
         val token :String = Cryption.getEncSHA256(Cryption.SecurityCode())
-        val user: User = userRepository.save(userReq.copy(useYn = "Y", sex = userReq.sex.toUpperCase()))
+        val user: User = userRepository.save(userReq.copy(
+                createdAt = now, updatedAt = now, useYn = "Y", sex = userReq.sex.toUpperCase(),
+                username = userReq.username.copy(createdAt = now, updatedAt = now)))
         user.userAuthInfo = userAuthInfoRepository.save(UserAuthInfo(userId = user.id, tokenKey = token))
         return user
     }
