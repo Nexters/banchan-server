@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import sun.rmi.runtime.Log;
@@ -27,8 +28,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class ReviewsServiceTest {
 
-    static final Long 테스트에사용할유저_ID = Long.valueOf(65);
-    static final Long 테스트에사용할질문_ID = Long.valueOf(150);
+    @Value("${test.reviews.userId}")
+    Long 테스트에사용할유저_ID;
+    @Value("${test.reviews.questionId}")
+    Long 테스트에사용할질문_ID;
 
     @Autowired
     private ReviewsService reviewsService;
