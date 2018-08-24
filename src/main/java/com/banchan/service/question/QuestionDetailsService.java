@@ -3,6 +3,7 @@ package com.banchan.service.question;
 import com.banchan.model.domain.question.DetailType;
 import com.banchan.model.entity.QuestionDetails;
 import com.banchan.repository.QuestionDetailsRepository;
+import com.banchan.repository.RewardHistoryRepository;
 import one.util.streamex.EntryStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,6 @@ public class QuestionDetailsService {
     @Autowired private QuestionDetailsRepository questionDetailsRepository;
 
     public List<QuestionDetails> add(Long questionId, Map<DetailType, String> details){
-
         return questionDetailsRepository.saveAll(
                 EntryStream.of(details)
                         .map(detail -> QuestionDetails.builder()
@@ -27,7 +27,6 @@ public class QuestionDetailsService {
                                 .content(detail.getValue())
                                 .build())
                         .collect(Collectors.toList()));
-
     }
 
     public CompletableFuture<Map<Long, Map<DetailType, String>>> findQuestionDetails(List<Long> questionIds){

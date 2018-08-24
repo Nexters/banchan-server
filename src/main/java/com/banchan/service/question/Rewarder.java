@@ -1,6 +1,7 @@
 package com.banchan.service.question;
 
 import com.banchan.model.domain.question.RewardType;
+import com.banchan.model.entity.RewardHistory;
 import com.banchan.model.exception.QuestionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,12 @@ public class Rewarder {
     @Value("${reward.value.decision}")
     private int valueDecision;
 
+    @Value("${reward.value.register}")
+    private int valueRegister;
+
+    @Value("${reward.value.post}")
+    private int valuePost;
+
     private final double DIVISION = 10.0;
 
     public boolean checkNew(LocalDateTime time){
@@ -56,6 +63,7 @@ public class Rewarder {
 
     public Double rewardOf(RewardType type){
         switch (type){
+            case REGISTER: return this.valueRegister / this.DIVISION;
             case BASIC: return this.valueBasic / this.DIVISION;
             case NEW: return this.valueNew / this.DIVISION;
             case FIRST: return this.valueFirst / this.DIVISION;
@@ -63,7 +71,17 @@ public class Rewarder {
                 return (new Random()
                         .nextInt(this.valueRandomMax - this.valueRandomMin + 1) + this.valueRandomMin) / this.DIVISION;
             case SAME: return this.valueDecision / this.DIVISION;
+            case QUESTION_POST: return this.valuePost / this.DIVISION;
             default: throw new QuestionException("올바른 리워드 타입이 아닙니다.");
         }
+    }
+
+    public RewardHistory registerHistory(Long id, LocalDateTime time){
+        return RewardHistory.builder()
+                .reward(rewardOf(RewardType.REGISTER))
+                .createdAt(time)
+                .type(RewardType.REGISTER)
+                .userId(id)
+                .build();
     }
 }
