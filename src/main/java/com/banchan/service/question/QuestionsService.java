@@ -12,6 +12,7 @@ import com.banchan.repository.QuestionCardDataRepository;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.repository.ReportsRepository;
 import com.banchan.repository.RewardHistoryRepository;
+import com.google.common.base.Strings;
 import one.util.streamex.EntryStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,7 @@ public class QuestionsService {
         questionDetailsService.add(
                 question.getId(),
                 EntryStream.of(questionCard.getDetail())
+                        .filterValues(content -> !Strings.isNullOrEmpty(content))
                         .peek(detail -> detail.setValue(
                                 detail.getKey().isImgType() ?
                                         imageUploader.upload(
