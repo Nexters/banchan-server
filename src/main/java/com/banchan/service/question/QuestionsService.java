@@ -86,12 +86,12 @@ public class QuestionsService {
 
     public List<QuestionCard> findUserMadeQuestionCard(Long userId, int start, int count){
         return this.toQuestionCards(
-                questionCardDataRepository.findUserMadeQuestions(userId, start, count));
+                questionCardDataRepository.findUserMadeQuestions(userId, start * count, count));
     }
 
     public List<QuestionCard> findVotedQuestionCard(Long userId, int start, int count){
         return this.toQuestionCards(
-                questionCardDataRepository.findVotedQuestions(userId, start, count));
+                questionCardDataRepository.findVotedQuestions(userId, start * count, count));
     }
 
     private List<QuestionCard> toQuestionCards(List<QuestionCardData> questionCardDataList){
