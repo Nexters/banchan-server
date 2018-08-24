@@ -1,14 +1,17 @@
 package com.banchan.service.question;
 
+import com.banchan.model.domain.question.RewardType;
 import com.banchan.model.dto.questions.QuestionReportRequestDto;
 import com.banchan.model.entity.QuestionCardData;
 import com.banchan.model.entity.Questions;
+import com.banchan.model.entity.RewardHistory;
 import com.banchan.model.exception.QuestionException;
 import com.banchan.model.vo.QuestionCard;
 import com.banchan.model.vo.VoteCount;
 import com.banchan.repository.QuestionCardDataRepository;
 import com.banchan.repository.QuestionsRepository;
 import com.banchan.repository.ReportsRepository;
+import com.banchan.repository.RewardHistoryRepository;
 import one.util.streamex.EntryStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ public class QuestionsService {
 
     @Autowired private QuestionsRepository questionsRepository;
     @Autowired private ReportsRepository reportsRepository;
+    @Autowired private RewardHistoryRepository rewardHistoryRepository;
 
     @Autowired private ImageUploader imageUploader;
     @Autowired private QuestionDetailsService questionDetailsService;
@@ -32,8 +36,10 @@ public class QuestionsService {
     @Transactional
     public Questions add(QuestionCard questionCard){
 
-        // questionCard 필요 조건 명시
+        if(rewardHistoryRepository.sumRewardByUserId(questionCard.getUserId()) < 1.0)
+            throw new QuestionException("SpeakerUnderOne");
 
+        // questionCard 필요 조건 명시
         Questions question = questionsRepository.save(
                 Questions.builder()
                         .userId(questionCard.getUserId())
@@ -54,6 +60,13 @@ public class QuestionsService {
                                                 Base64.getDecoder().decode(detail.getValue()))
                                         : detail.getValue()))
                         .toMap());
+
+        rewardHistoryRepository.save(RewardHistory.builder()
+                .userId(questionCard.getUserId())
+                .type(RewardType.QUESTION_POST)
+                .reward(rewarder.rewardOf(RewardType.QUESTION_POST))
+                .createdAt(LocalDateTime.now())
+                .build());
 
         return question;
     }

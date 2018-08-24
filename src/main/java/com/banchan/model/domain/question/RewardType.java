@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public enum RewardType {
 
-    BASIC("B"), NEW("N"), FIRST("F"), RANDOM("R"), SAME("S");
+    BASIC("B"), NEW("N"), FIRST("F"), RANDOM("R"), SAME("S"), REGISTER("R"), QUESTION_POST("P");
 
     private static final Map<String, RewardType> map = Maps.newHashMap();
 
