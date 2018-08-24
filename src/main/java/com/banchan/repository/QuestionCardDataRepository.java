@@ -25,7 +25,8 @@ public interface QuestionCardDataRepository extends JpaRepository<QuestionCardDa
                     "      q.decision IS NULL AND  " +
                     "      q.report_state = 0 AND  " +
                     "      q.user_id != :userId " +
-                    "      LIMIT :counting " +
+                    "    ORDER BY q.random_order " +
+                    "    LIMIT :counting " +
                     "  ) q  " +
                     "  LEFT JOIN votes v  " +
                     "    ON q.id = v.question_id  " +
@@ -35,7 +36,8 @@ public interface QuestionCardDataRepository extends JpaRepository<QuestionCardDa
                     "    ON q.user_id = u.id  " +
                     "  GROUP BY q.id) qu  " +
                     "LEFT JOIN question_details qd  " +
-                    "  ON qu.id = qd.question_id",
+                    "  ON qu.id = qd.question_id " +
+                    "ORDER BY qu.random_order",
             nativeQuery = true
     )
     List<QuestionCardData> findNotVotedQuestions(
