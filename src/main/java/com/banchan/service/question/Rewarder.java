@@ -22,7 +22,7 @@ public class Rewarder {
     @Value("${reward.constraint.random}")
     private int constraintRandom;
 
-    @Value("${reward.value.speaker}")
+    @Value("${reward.value.basic}")
     private int valueBasic;
 
     @Value("${reward.value.speaker}")
