@@ -1,7 +1,5 @@
 # NANIGO Server [![Build Status](https://travis-ci.org/Nexters/banchan-server.svg?branch=master)](https://travis-ci.org/Nexters/banchan-server)
 
----
-
 ## ![](./intro-img/main.png)
 
 ## [난 이거! 나니고!](https://play.google.com/store/apps/details?id=banchan.nexters.com.nanigoandroid)
